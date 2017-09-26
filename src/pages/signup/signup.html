@@ -1,0 +1,36 @@
+<ion-content padding>
+  <!--TO DO eventu image-->
+  <ion-grid>
+    <ion-row>
+      <ion-col col-12>
+        <ion-item>
+          <ion-input placeholder="Correo" clearInput type="email"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12>
+        <ion-item>
+          <ion-input placeholder="Nombre" required clearInput type="text"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12>
+        <ion-item>
+          <ion-input placeholder="Contraseña" required clearInput type="password"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12>
+        <button ion-button full class="btnAccept">Registrarse</button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12>
+        <button ion-button full class="btnCancel" (click)="login()">Cancelar</button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

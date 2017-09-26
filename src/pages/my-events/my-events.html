@@ -1,0 +1,18 @@
+<ion-header>
+
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>MyEvents</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+    <ion-tabs>
+      <ion-tab [root]="ownRoot" tabTitle="Propios" tabIcon="home"></ion-tab>
+      <ion-tab [root]="assistedRoot" tabTitle="Asistidos" tabIcon="information-circle"></ion-tab>
+    </ion-tabs>
+</ion-content>

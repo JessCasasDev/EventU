@@ -1,0 +1,37 @@
+<ion-content padding>
+  <!--TO DO eventu image-->
+  <ion-grid>
+    <ion-row>
+      <ion-col col-12>
+        <ion-item>
+          <ion-input placeholder="Correo" [(ngModel)]="email" clearInput type="email"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12>
+        <ion-item>
+          <ion-input placeholder="Contraseña" [(ngModel)]="password" clearInput type="password"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12>
+        <ion-item>
+          <ion-label>Recordarme</ion-label>
+          <ion-checkbox [(ngModel)]="remember"></ion-checkbox>
+        </ion-item>          
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12>
+        <button ion-button full class="btnAccept" (click)="login()">Entrar</button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12>
+        <button ion-button full class="btnPlus" (click)="signup()" >Registrarse</button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
