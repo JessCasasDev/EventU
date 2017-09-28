@@ -5,20 +5,19 @@ import * as Leaflet from 'leaflet';
 
 @IonicPage()
 @Component({
-  selector: 'page-near-events',
-  templateUrl: 'near-events.html',
+  selector: 'page-map-events',
+  templateUrl: 'map-events.html',
 })
-export class NearEventsPage {
+export class MapEventsPage {
   mymap: any;
   lat: number;
   lng: number;
-
   constructor(public navCtrl: NavController, public navParams: NavParams, public geoLoc: GeolocationProvider) {
-    this.initialize();
+    this.initialize(); 
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad NearEventsPage');
+    console.log('ionViewDidLoad MapEventsPage');
     this.loadMap();
   }
 
@@ -33,4 +32,5 @@ export class NearEventsPage {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.mymap);
   }
+
 }

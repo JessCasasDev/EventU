@@ -13,7 +13,7 @@
 //
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
-// automatically applied to the <body> element in the app.
+// automatically applied to the <body> element in the app.  
 
 
 //Buttons
@@ -25,4 +25,10 @@
 }
 .btnPlus{
     background-color: color($Ucolors,plus);
+}
+
+//Maps
+#mapEvent {
+    height: 100%;
+    width: 100%;
 }

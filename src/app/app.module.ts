@@ -4,16 +4,19 @@ import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 
 import { MyApp } from './app.component';
 
-import { LoginPage } from '../pages/login/login';
-import { SignupPage } from '../pages/signup/signup';
-import { NearEventsPage} from '../pages/near-events/near-events';
-import { CreateEventsPage } from '../pages/create-events/create-events';
-import { MyEventsPage } from '../pages/my-events/my-events';
-import { OwnEventsPage } from '../pages/own-events/own-events';
 import { AssistedEventsPage } from '../pages/assisted-events/assisted-events';
+import { CreateEventsPage } from '../pages/create-events/create-events';
+import { LoginPage } from '../pages/login/login';
+import { MapEventsPage } from '../pages/map-events/map-events';
+import { MyEventsPage } from '../pages/my-events/my-events';
+import { NearEventsPage} from '../pages/near-events/near-events';
+import { OwnEventsPage } from '../pages/own-events/own-events';
+import { SignupPage } from '../pages/signup/signup';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import { GeolocationProvider } from '../providers/geolocation/geolocation';
+import { HttpModule } from '@angular/http';
 
 @NgModule({
   declarations: [
@@ -25,11 +28,13 @@ import { SplashScreen } from '@ionic-native/splash-screen';
     MyEventsPage,
     OwnEventsPage,
     AssistedEventsPage,
+    MapEventsPage,
 
   ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
+    HttpModule,
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -41,12 +46,15 @@ import { SplashScreen } from '@ionic-native/splash-screen';
     MyEventsPage,
     OwnEventsPage,
     AssistedEventsPage,
-
+    MapEventsPage,
+    
   ],
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    GeolocationProvider,
+  
   ]
 })
 export class AppModule {}
