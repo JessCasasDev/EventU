@@ -8,7 +8,7 @@ import { SignupPage } from '../pages/signup/signup';
 import { NearEventsPage } from "../pages/near-events/near-events"
 import { CreateEventsPage } from "../pages/create-events/create-events"
 import { MyEventsPage } from '../pages/my-events/my-events';
-import { MapPage } from '../pages/map/map';
+
 
 @Component({
   templateUrl: 'app.html'
@@ -27,7 +27,6 @@ export class MyApp {
       {title: "Eventos Cercanos", icon:"home",component: NearEventsPage},
       {title: "Crear Evento", icon:"add",component: CreateEventsPage},
       { title: "Mis Eventos", icon: "person", component: MyEventsPage },
-      { title: "Mapa", icon: "ios-map-outline", component: MapPage }, //Only for demo, page is not going to be in Sidemenu
     ];
 
   }

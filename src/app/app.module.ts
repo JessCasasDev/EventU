@@ -11,7 +11,6 @@ import { CreateEventsPage } from '../pages/create-events/create-events';
 import { MyEventsPage } from '../pages/my-events/my-events';
 import { OwnEventsPage } from '../pages/own-events/own-events';
 import { AssistedEventsPage } from '../pages/assisted-events/assisted-events';
-import { MapPage } from '../pages/map/map';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -26,7 +25,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
     MyEventsPage,
     OwnEventsPage,
     AssistedEventsPage,
-    MapPage,
+
   ],
   imports: [
     BrowserModule,
@@ -42,7 +41,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
     MyEventsPage,
     OwnEventsPage,
     AssistedEventsPage,
-    MapPage,
+
   ],
   providers: [
     StatusBar,
