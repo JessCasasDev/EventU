@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { LoginPage } from "../login/login"
+import { FirebaseProvider } from './../../providers/firebase/firebase';
 
 @IonicPage()
 @Component({
@@ -9,7 +10,11 @@ import { LoginPage } from "../login/login"
 })
 export class SignupPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  email:string;
+  password: string;
+
+  constructor(public navCtrl: NavController, public navParams: NavParams,
+              public firePro: FirebaseProvider) {
   }
 
   ionViewDidLoad() {
@@ -19,5 +24,16 @@ export class SignupPage {
   login(){
     this.navCtrl.setRoot(LoginPage);
   }
+
+  signUp(){
+    if(this.firePro.validateInputs(this.email, this.password)){
+      this.firePro.singUp(this.email, this.password).then(
+        data => {
+          console.log(data);
+        }
+      );
+    }
+  }
+
 
 }
