@@ -13,16 +13,49 @@
 //
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
-// automatically applied to the <body> element in the app.
+// automatically applied to the <body> element in the app.  
 
 
 //Buttons
-.btnAccept{
-    background-color: color($Ucolors,accept);
+.btnAccept {
+    background-color: color($colors,accept);
 }
-.btnCancel{
-    background-color: color($Ucolors,cancel);
+.btnCancel {
+    background-color: color($colors,cancel);
 }
-.btnPlus{
-    background-color: color($Ucolors,plus);
+.btnPlus {
+    background-color: color($colors,plus);
+}
+
+//Images
+.eventuLogo-login {
+    height: 200px;
+    width: 200px;
+    display: block;
+    margin-top: 50px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.img-profile {
+    height: 120px;
+    width: 120px;
+    display: block;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+//Texts
+.text-profile {
+    text-align: center;
+    p {
+        font-size: 2rem;
+    }
+}
+
+//Maps
+#mapEvent, #map {
+    height: 100%;
+    width: 100%;
 }
