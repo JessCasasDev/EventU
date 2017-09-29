@@ -1,20 +1,30 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { GeolocationProvider } from '../../providers/geolocation/geolocation'
+import { GeolocationProvider } from '../../providers/geolocation/geolocation';
+import { DatePickerDirective } from 'ion-datepicker';
 import * as Leaflet from 'leaflet';
 
 @IonicPage()
 @Component({
-  selector: 'page-near-events',
+        selector: 'page-near-events',
+        providers: [DatePickerDirective],
   templateUrl: 'near-events.html',
 })
 export class NearEventsPage {
+    @ViewChild(DatePickerDirective) private datePicker: DatePickerDirective;
+
   mymap: any;
   lat: number;
   lng: number;
+  date: Date;
+  localeString = {
+      monday: true,
+      weekdays: ['Lun', 'Mar', 'Miér', 'Jue', 'Vier', 'Sáb', 'Dom'],
+      months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+  };
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public geoLoc: GeolocationProvider) {
-    this.initialize();
+      this.initialize();
   }
 
   ionViewDidLoad() {
@@ -25,6 +35,7 @@ export class NearEventsPage {
   initialize(){
     this.lat = this.geoLoc.lat;
     this.lng = this.geoLoc.lng;
+    this.date = new Date();
   }
 
   loadMap() {
@@ -32,5 +43,13 @@ export class NearEventsPage {
     Leaflet.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.mymap);
+  }
+
+  showCalendar() {
+      this.datePicker.open();
+  }
+
+  changeDate(event) {
+      this.date = event;
   }
 }

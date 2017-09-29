@@ -5,13 +5,20 @@
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title>Eventos Cercanos</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-right color="royal" (click)="showCalendar()">
+        <ion-icon name="md-calendar"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content>
-
+  <span ion-datepicker (ionChanged)="changeDate($event);" [value]="date" clear class="ScheduleDate"
+        [localeStrings] ="localeString">
+  </span>
   <div id="mapEvent"></div>
   <!--<button ion-button icon-only (click)="centerMap()" class="center_map_btn">
     <ion-icon name="locate"></ion-icon>

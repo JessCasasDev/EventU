@@ -59,3 +59,35 @@
     height: 100%;
     width: 100%;
 }
+
+// Datepicker
+ionic2-datepicker {
+  .datepicker-wrapper .datepicker-header {
+    background-color: color($colors, greenU) !important;
+  }
+
+  .datepicker-wrapper .datepicker-header .weekday-header {
+    background-color: color($colors, greenU) !important;
+  }
+
+  .datepicker-current {
+    background-color: transparent !important;
+    color: color($colors, greenU) !important;
+    font-weight: bold;
+  }
+
+  .datepicker-temp {
+    background-color: color($colors, greenU) !important;
+    color: #fff !important;
+  }
+
+  .button {
+    background-color: color($colors, greenU) !important;
+    color: #fff;
+  }
+
+  .datepicker-footer > button:first-child {
+    background-color: color($colors, redU) !important;
+    color: #fff;
+  }
+}

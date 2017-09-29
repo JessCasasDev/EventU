@@ -15,7 +15,7 @@
   <ion-grid>
     <ion-row>
       <ion-col col-4>
-        <button ion-button full icon-only clear>
+        <button ion-button full icon-only clear (click)="showCalendar()">
           <ion-icon name="md-calendar"></ion-icon>
         </button>
       </ion-col>
@@ -57,4 +57,7 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+  <span ion-datepicker (ionChanged)="changeDate($event);" [value]="date" clear class="ScheduleDate"
+        [localeStrings]="localeString">
+  </span>
 </ion-content>

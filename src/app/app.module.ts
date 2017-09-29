@@ -17,6 +17,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { GeolocationProvider } from '../providers/geolocation/geolocation';
 import { HttpModule } from '@angular/http';
+import { DatePickerModule } from 'ion-datepicker';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { HttpModule } from '@angular/http';
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
+    DatePickerModule,
     HttpModule,
   ],
   bootstrap: [IonicApp],

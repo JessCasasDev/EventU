@@ -1,14 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { DatePickerDirective } from 'ion-datepicker';
 import { MapEventsPage } from '../map-events/map-events'
 
 @IonicPage()
 @Component({
-  selector: 'page-create-events',
+        selector: 'page-create-events',
+        providers: [DatePickerDirective],
   templateUrl: 'create-events.html',
 })
 export class CreateEventsPage {
-  description:string;
+    @ViewChild(DatePickerDirective) private datePicker: DatePickerDirective;
+
+    description: string;
+    date: Date;
+    localeString = {
+        monday: true,
+        weekdays: ['Lun', 'Mar', 'Miér', 'Jue', 'Vier', 'Sáb', 'Dom'],
+        months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+    };
+
   constructor(public navCtrl: NavController, public navParams: NavParams) {
     this.initialize();
 
@@ -20,7 +31,8 @@ export class CreateEventsPage {
   }
 
   initialize(){
-    this.description = "";
+      this.description = "";
+      this.date = new Date();
   }
 
   test(){
@@ -29,5 +41,13 @@ export class CreateEventsPage {
 
   mapEvent(){
     this.navCtrl.push(MapEventsPage)
+  }
+
+  showCalendar() {
+      this.datePicker.open();
+  }
+
+  changeDate(event) {
+      this.date = event;
   }
 }
