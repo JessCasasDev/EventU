@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
-import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
-import { AngularFireAuth } from 'angularfire2/auth'
+import { AngularFireDatabase } from 'angularfire2/database';
+import { AngularFireAuth } from 'angularfire2/auth';
+import { ToastController } from 'ionic-angular';
 
 @Injectable()
 export class FirebaseProvider {
 
-  constructor(public http: Http, public fireDB: AngularFireDatabase, public fireAuth: AngularFireAuth) {
+  constructor(public http: Http, public fireDB: AngularFireDatabase, public fireAuth: AngularFireAuth,
+              public toastCtrl: ToastController) {
     console.log('Hello FirebaseProvider Provider');
   }
 
@@ -17,10 +19,10 @@ export class FirebaseProvider {
     if(pass){
       if(!this.validatePassword(password)) {
         pass = false;
-        /* TODO contraseña invalida */ console.log("contraseña debe tener al menos 6 caracteres")
+        this.presentToast("La contraseña es muy corta");
       }
     }
-    else /* TODO correo invalido */ console.log("correo debe ser de la unal");
+    else this.presentToast("Debe ser un correo @unal");
     return pass;
   }
 
@@ -37,10 +39,11 @@ export class FirebaseProvider {
   }
 
   validatePassword(password){
-    password = password.replace(/ /g,'');
-    password = password.trim();
-    if(password.length < 6) return false;
-    return true;
+    let index = password.indexOf(" ");
+    console.log(index);
+    let pass = false;
+    if(index == -1 && password.length > 5) pass = true;
+    return pass;
   }
 
   //Authentication
@@ -48,12 +51,10 @@ export class FirebaseProvider {
     return new Promise((resolve,reject) => {
       this.fireAuth.auth.signInWithEmailAndPassword(email,password).then(
         (data) => {
-          console.log(data);
           resolve(data);
         }
     ).catch(error => {
-      console.log(error);
-      reject("Correo y/o contraseña incorrectos");
+      this.presentToast("Correo y/o contraseña incorrectos");
       });
     });
   }
@@ -62,6 +63,9 @@ export class FirebaseProvider {
     return new Promise((resolve,reject) => {
       this.fireAuth.auth.createUserWithEmailAndPassword(email,password).then(
         (data) => {
+          this.fireAuth.auth.onAuthStateChanged(user => {
+            user.sendEmailVerification(); 
+          })
           resolve(data);
         }
     ).catch((error) => {
@@ -82,6 +86,15 @@ export class FirebaseProvider {
  
   removeEvent(id) {
     this.fireDB.list('/events/').remove(id);
+  }
+
+  //Alerts
+  presentToast(message){
+    let toast = this.toastCtrl.create({
+      message: message,
+      duration: 3000
+    });
+    toast.present();
   }
 
 }
