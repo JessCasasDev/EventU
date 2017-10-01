@@ -3,58 +3,31 @@ import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';
-import { ToastController } from 'ionic-angular';
+import { ConfigProvider } from '../config/config'
 
 @Injectable()
 export class FirebaseProvider {
 
-  constructor(public http: Http, public fireDB: AngularFireDatabase, public fireAuth: AngularFireAuth,
-              public toastCtrl: ToastController) {
+  user: any = [];
+
+  constructor(public http: Http, public fireDB: AngularFireDatabase,
+              public fireAuth: AngularFireAuth, public configPro: ConfigProvider) {
     console.log('Hello FirebaseProvider Provider');
   }
 
-  //Validations
-  validateInputs(email, password){
-    let pass = this.validateEmail(email);
-    if(pass){
-      if(!this.validatePassword(password)) {
-        pass = false;
-        this.presentToast("La contraseña es muy corta");
-      }
-    }
-    else this.presentToast("Debe ser un correo @unal");
-    return pass;
-  }
-
-  validateEmail(email){
-    let pass = false;
-    let index = email.indexOf("@");
-    email = email.replace(/ /g,'');
-    email = email.trim();
-    email = email.toLowerCase();
-    if(email != "" && index != -1){
-      if(email.substring(index, email.length) == "@unal.edu.co") pass = true;
-    }
-    return pass;
-  }
-
-  validatePassword(password){
-    let index = password.indexOf(" ");
-    console.log(index);
-    let pass = false;
-    if(index == -1 && password.length > 5) pass = true;
-    return pass;
-  }
 
   //Authentication
   login(email, password){
     return new Promise((resolve,reject) => {
       this.fireAuth.auth.signInWithEmailAndPassword(email,password).then(
         (data) => {
-          resolve(data);
+          this.user = data;
+          if(this.user.emailVerified) resolve(data);
+          else this.configPro.presentToast("Debes Validar tu correo primero");
         }
-    ).catch(error => {
-      this.presentToast("Correo y/o contraseña incorrectos");
+    ).catch((error) => {
+      console.log(error);
+      this.configPro.presentToast("Correo y/o contraseña incorrectos");
       });
     });
   }
@@ -80,21 +53,26 @@ export class FirebaseProvider {
     return this.fireDB.list('/events/');
   }
  
-  addEvent(name) {
-    this.fireDB.list('/events/').push(name);
+  addEvent(event) {
+    event.user = this.user.uid;
+    console.log(event);
+    return new Promise( (resolve, reject) => {
+      this.fireDB.list('/events/').push(event).then(
+        (data) => {
+          this.configPro.presentToast("El evento se ha creado con exito");
+          resolve(data);
+        }
+      ).catch( (error) => {
+        console.log(error);
+        this.configPro.presentToast("No se ha podido crear el evento");
+      });
+    });
   }
  
   removeEvent(id) {
     this.fireDB.list('/events/').remove(id);
   }
 
-  //Alerts
-  presentToast(message){
-    let toast = this.toastCtrl.create({
-      message: message,
-      duration: 3000
-    });
-    toast.present();
-  }
+
 
 }

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { LoginPage } from "../login/login"
 import { FirebaseProvider } from './../../providers/firebase/firebase';
+import { ConfigProvider } from './../../providers/config/config';
 
 @IonicPage()
 @Component({
@@ -14,7 +15,7 @@ export class SignupPage {
   password: string;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
-              public firePro: FirebaseProvider) {
+              public firePro: FirebaseProvider, public configPro: ConfigProvider) {
   }
 
   ionViewDidLoad() {
@@ -26,7 +27,7 @@ export class SignupPage {
   }
 
   signUp(){
-    if(this.firePro.validateInputs(this.email, this.password)){
+    if(this.configPro.validateInputs(this.email, this.password)){
       this.firePro.singUp(this.email, this.password).then(
         data => {
           console.log(data);
