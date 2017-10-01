@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { GeolocationProvider } from '../../providers/geolocation/geolocation';
 import { DatePickerDirective } from 'ion-datepicker';
+import { FirebaseProvider } from './../../providers/firebase/firebase';
 import * as Leaflet from 'leaflet';
 
 @IonicPage()
@@ -19,11 +20,12 @@ export class NearEventsPage {
   date: Date;
   localeString = {
       monday: true,
-      weekdays: ['Lun', 'Mar', 'Miér', 'Jue', 'Vier', 'Sáb', 'Dom'],
+      weekdays: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
       months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
   };
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public geoLoc: GeolocationProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams,
+              public geoLoc: GeolocationProvider, public firePro: FirebaseProvider) {
       this.initialize();
   }
 
@@ -51,5 +53,9 @@ export class NearEventsPage {
 
   changeDate(event) {
       this.date = event;
+  }
+
+  getEvent(){
+      this.firePro.getEvents();
   }
 }

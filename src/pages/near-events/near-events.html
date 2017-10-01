@@ -1,12 +1,12 @@
 <ion-header>
 
-  <ion-navbar color="greenU">
+  <ion-navbar color="violetU">
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title>Eventos Cercanos</ion-title>
     <ion-buttons end>
-      <button ion-button icon-right color="royal" (click)="showCalendar()">
+      <button ion-button icon-right (click)="showCalendar()">
         <ion-icon name="md-calendar"></ion-icon>
       </button>
     </ion-buttons>
@@ -20,7 +20,4 @@
         [localeStrings] ="localeString">
   </span>
   <div id="mapEvent"></div>
-  <!--<button ion-button icon-only (click)="centerMap()" class="center_map_btn">
-    <ion-icon name="locate"></ion-icon>
-  </button>-->
 </ion-content>

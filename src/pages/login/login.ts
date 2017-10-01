@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, Events} from 'ionic-angular';
 import { SignupPage } from "../signup/signup"
 import { NearEventsPage } from "../near-events/near-events"
+import { FirebaseProvider } from './../../providers/firebase/firebase';
 
 @IonicPage()
 @Component({
@@ -14,7 +15,7 @@ export class LoginPage {
   password:String;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
-              public events: Events) {
+              public events: Events, public firePro: FirebaseProvider) {
     this.initialize();
   }
 
@@ -32,7 +33,7 @@ export class LoginPage {
   }
 
   login(){
-    //TODO Uncomment if(!this.validateInputs()) return;
+    if(!this.validateInputs()) return;
     if(this.authUser()) this.navCtrl.setRoot(NearEventsPage);
   }
 
@@ -54,7 +55,9 @@ export class LoginPage {
   }
 
   authUser(){
-    /* TO - DO */
+    /*this.firePro.login(this.email, this.password).then(
+      data => {console.log(data)}
+    );*/
     this.events.publish('user:login',"Nombre Apellido","url imagen");
     return true;
   }
