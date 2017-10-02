@@ -23,6 +23,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { GeolocationProvider } from '../providers/geolocation/geolocation';
 import { FirebaseProvider } from '../providers/firebase/firebase';
+import { ConfigProvider } from '../providers/config/config';
 
 
 
@@ -77,6 +78,7 @@ const firebaseConfig = {
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     GeolocationProvider,
     FirebaseProvider,
+    ConfigProvider,
   
   ]
 })

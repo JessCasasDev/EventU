@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams, Events} from 'ionic-angular';
 import { SignupPage } from "../signup/signup"
 import { NearEventsPage } from "../near-events/near-events"
 import { FirebaseProvider } from './../../providers/firebase/firebase';
+import { ConfigProvider } from './../../providers/config/config';
 
 @IonicPage()
 @Component({
@@ -13,9 +14,10 @@ export class LoginPage {
 
   email:String;
   password:String;
-
+  user: any = [];
   constructor(public navCtrl: NavController, public navParams: NavParams,
-              public events: Events, public firePro: FirebaseProvider) {
+              public events: Events, public firePro: FirebaseProvider,
+              public configPro: ConfigProvider) {
     this.initialize();
   }
 
@@ -33,32 +35,17 @@ export class LoginPage {
   }
 
   login(){
-    if(!this.validateInputs()) return;
-    if(this.authUser()) this.navCtrl.setRoot(NearEventsPage);
+    if(this.configPro.validateInputs(this.email, this.password)) this.authUser();
   }
 
-  validateInputs(){
-    let pass = false;
-    let index = this.email.indexOf("@");
-    this.email = this.email.replace(/ /g,'');
-    this.email = this.email.trim();
-    this.email = this.email.toLowerCase();
-
-    this.password = this.password.replace(/ /g,'');
-    this.password = this.password.trim();
-
-    if(this.email != "" && this.password != "" && index != -1){
-      if(this.email.substring(index, this.email.length) == "@unal.edu.co") pass = true;
-      else /* todo*/ pass = false;
-    }
-    return pass;
-  }
 
   authUser(){
-    /*this.firePro.login(this.email, this.password).then(
-      data => {console.log(data)}
-    );*/
-    this.events.publish('user:login',"Nombre Apellido","url imagen");
-    return true;
+    this.firePro.login(this.email, this.password).then(
+      (data) => {
+        this.user = data;
+        this.events.publish('user:login',this.user.uid,this.user.email,"url imagen");
+        this.navCtrl.setRoot(NearEventsPage);
+      }
+    );
   }
 }

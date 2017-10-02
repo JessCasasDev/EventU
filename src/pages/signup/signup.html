@@ -1,30 +1,30 @@
 <ion-content padding>
-  <!--TO DO eventu image-->
+  <img src="assets/img/eventuLogo.jpg" class="eventuLogo-login">
   <ion-grid>
     <ion-row>
       <ion-col col-12>
         <ion-item>
-          <ion-input placeholder="Correo" clearInput type="email"></ion-input>
+          <ion-input placeholder="Correo" [(ngModel)]="email" clearInput type="email"></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
-    <ion-row>
+    <!--<ion-row>
       <ion-col col-12>
         <ion-item>
           <ion-input placeholder="Nombre" required clearInput type="text"></ion-input>
         </ion-item>
       </ion-col>
-    </ion-row>
+    </ion-row>-->
     <ion-row>
       <ion-col col-12>
         <ion-item>
-          <ion-input placeholder="Contraseña" required clearInput type="password"></ion-input>
+          <ion-input placeholder="Contraseña" [(ngModel)]="password" required clearInput type="password"></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col col-12>
-        <button ion-button full class="btnAccept">Registrarse</button>
+        <button ion-button full class="btnAccept" (click)="signUp()">Registrarse</button>
       </ion-col>
     </ion-row>
     <ion-row>
