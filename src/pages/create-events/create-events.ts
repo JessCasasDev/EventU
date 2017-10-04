@@ -1,7 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { DatePickerDirective } from 'ion-datepicker';
-import { MapEventsPage } from '../map-events/map-events'
 import { FirebaseProvider } from '../../providers/firebase/firebase'
 import { ConfigProvider } from '../../providers/config/config'
 import { GeolocationProvider } from '../../providers/geolocation/geolocation';
@@ -51,11 +50,7 @@ export class CreateEventsPage {
     this.date = new Date();
     this.newEvent = {name: "", description: "", phone: null,date: "", coordinates:{lat:null, lng:null}};
   }
-
-  mapEvent(){
-    this.navCtrl.push(MapEventsPage)
-  }
-
+    
   showCalendar() {
       this.datePicker.open();
   }
