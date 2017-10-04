@@ -14,23 +14,6 @@
 
   <ion-grid>
     <ion-row>
-      <ion-col col-4>
-        <button ion-button full icon-only clear (click)="showCalendar()">
-          <ion-icon name="md-calendar"></ion-icon>
-        </button>
-      </ion-col>
-      <ion-col col-4>
-        <ion-item>
-          Imagen
-        </ion-item>
-      </ion-col>
-      <ion-col col-4>
-        <button ion-button full icon-only clear (click)="mapEvent()">
-          <ion-icon name="ios-map"></ion-icon>
-        </button>
-      </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col col-12>
         <ion-item>
           <ion-input placeholder="Dale un nombre a tu evento" [(ngModel)]="newEvent.name" clearInput></ion-input>
@@ -47,7 +30,7 @@
     <ion-row>
       <ion-col col-12>
         <ion-item>
-          <ion-input placeholder="Agrega un numero para comunicarte" [(ngModel)]="newEvent.phone" type="tel" max=11></ion-input>
+          <ion-input placeholder="Agrega un número para comunicarte" [(ngModel)]="newEvent.phone" type="tel" max=11></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
@@ -56,6 +39,14 @@
         <button ion-item (click)="showCalendar()">
         Fecha: {{date | date}}
         </button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12>
+        Seleccione la ubicación
+      </ion-col>
+      <ion-col col-12>
+        <div id="mapCreateEvent" (click)="setEventPosition()"></div>
       </ion-col>
     </ion-row>
     <ion-row>
