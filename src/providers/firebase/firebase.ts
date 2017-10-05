@@ -42,15 +42,37 @@ export class FirebaseProvider {
           resolve(data);
         }
     ).catch((error) => {
+        let err: any = [];
+        err = error;
         console.log(error);
-        reject(error);
+        if(err.code == "auth/email-already-in-use")
+          this.configPro.presentToast("El correo ya se encuentra registrado, por favor valida tu correo")
       });
     });
   }
 
   //Events
+  getEventsById() {
+    return new Promise((resolve, reject) => {
+      this.fireDB.list('/events/').subscribe( data => {
+        if(data.length > 0) resolve(data);
+        else console.log(data);
+      });
+    })
+  }
+
   getEvents() {
-    return this.fireDB.list('/events/');
+    return new Promise((resolve,reject) =>{
+      let events = [];
+      var ref = this.fireDB.database.ref('events').orderByChild("user");
+      ref.equalTo(this.user.uid).once("value", data => {
+        data.forEach( a => {
+          events.push(a.val());
+          return false;
+        });
+      }).then( data => resolve(events))
+    })
+
   }
  
   addEvent(event) {
