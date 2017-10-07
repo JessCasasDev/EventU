@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { FirebaseProvider } from '../../providers/firebase/firebase'
+import { FirebaseProvider } from '../../providers/firebase/firebase';
+import { EventsDetailPage } from '../events-detail/events-detail';
 
 @IonicPage()
 @Component({
@@ -33,6 +34,10 @@ export class OwnEventsPage {
     }).catch( error => {
       this.loadingEvents = false;
     });
+  }
+
+  eventDetail(event){
+    this.navCtrl.push(EventsDetailPage, {'event':event});
   }
 
 }
