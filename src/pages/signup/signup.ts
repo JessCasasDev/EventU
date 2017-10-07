@@ -31,6 +31,7 @@ export class SignupPage {
       this.firePro.singUp(this.email, this.password).then(
         data => {
           console.log(data);
+          this.login();
         }
       );
     }
