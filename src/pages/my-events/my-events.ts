@@ -25,6 +25,7 @@ export class MyEventsPage {
   }
 
   goToEventDetail(event){
+    console.log(this.navCtrl.getViews());
     this.navCtrl.push(EventsDetailPage, {'event':event});
   }
 

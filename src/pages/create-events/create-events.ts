@@ -76,8 +76,10 @@ localeString = {
                     text: "Si",
                     handler: () => {
                         if (this.validateFields()) {
-                            this.firePro.addEvent(this.newEvent).then((data) =>
+                            this.firePro.addEvent(this.newEvent).then((data) =>{
+                                this.mymap.remove();
                                 this.navCtrl.setRoot(MyEventsPage)
+                            }
                             );
                         }
                           

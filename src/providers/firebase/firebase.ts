@@ -54,7 +54,7 @@ export class FirebaseProvider {
   //Events
   getEvents() {
       return new Promise((resolve, reject) => {
-          let data = this.fireDB.list('/events/').subscribe( data =>{
+          let data = this.fireDB.list('/events/').valueChanges().subscribe( data =>{
             console.log(data);
             if(data) resolve(data);
             else console.log(data);
@@ -91,10 +91,7 @@ export class FirebaseProvider {
           this.configPro.presentToast("El evento se ha creado con exito");
           resolve(data);
         }
-      ).catch( (error) => {
-        console.log(error);
-        this.configPro.presentToast("No se ha podido crear el evento");
-      });
+      )
     });
   }
  
