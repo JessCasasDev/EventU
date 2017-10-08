@@ -52,11 +52,13 @@ export class FirebaseProvider {
   }
 
   //Events
-  getEventsById() {
+  getEvents() {
       return new Promise((resolve, reject) => {
-          let data = this.fireDB.list('/events/')
-          console.log(data);
-          if (data) resolve(data)
+          let data = this.fireDB.list('/events/').subscribe( data =>{
+            console.log(data);
+            if(data) resolve(data);
+            else console.log(data);
+          })
       });
 
         /*.subscribe( data => {
@@ -67,7 +69,7 @@ export class FirebaseProvider {
     })*/
   }
 
-  getEvents() {
+  getEventsById() {
     return new Promise((resolve,reject) =>{
       let events = [];
       var ref = this.fireDB.database.ref('events').orderByChild("user");
@@ -83,17 +85,16 @@ export class FirebaseProvider {
  
   addEvent(event) {
     event.user = this.user.uid;
-    console.log(event);
     return new Promise( (resolve, reject) => {
       this.fireDB.list('/events/').push(event).then(
         (data) => {
           this.configPro.presentToast("El evento se ha creado con exito");
           resolve(data);
         }
-      )/*.catch( (error) => {
+      ).catch( (error) => {
         console.log(error);
         this.configPro.presentToast("No se ha podido crear el evento");
-      });*/
+      });
     });
   }
  
