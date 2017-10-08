@@ -1,6 +1,6 @@
 <ion-header>
 
-  <ion-navbar>
+  <ion-navbar color="violetU">
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
@@ -11,42 +11,46 @@
 
 
 <ion-content padding>
-
   <ion-grid>
     <ion-row>
-      <ion-col col-4>
-        <button ion-button full icon-only clear (click)="showCalendar()">
-          <ion-icon name="md-calendar"></ion-icon>
-        </button>
-      </ion-col>
-      <ion-col col-4>
-        <ion-item>
-          Imagen
-        </ion-item>
-      </ion-col>
-      <ion-col col-4>
-        <button ion-button full icon-only clear (click)="mapEvent()">
-          <ion-icon name="ios-map"></ion-icon>
-        </button>
-      </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col col-12>
         <ion-item>
-          <ion-input placeholder="Dale un nombre a tu evento" clearInput></ion-input>
+          <ion-input placeholder="Dale un nombre a tu evento" [(ngModel)]="newEvent.name" clearInput></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col col-12>
         <ion-item>
-          <ion-textarea placeholder="Describe tu evento" [(ngModel)]="description"></ion-textarea>
+          <ion-textarea placeholder="Describe tu evento" [(ngModel)]="newEvent.description"></ion-textarea>
         </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12>
+        <ion-item>
+          <ion-input placeholder="Agrega un número para comunicarte" [(ngModel)]="newEvent.phone" type="tel" max=11></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12>
+        <button ion-item (click)="showCalendar()">
+        Fecha: {{date | date}}
+        </button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12>
+        Selecciona la ubicación
+      </ion-col>
+      <ion-col col-12>
+        <div id="mapCreateEvent" (click)="setEventPosition()"></div>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col col-6>
-        <button ion-button full class="btnAccept">
+        <button ion-button full class="btnAccept" (click)="createEvent()">
           Crear
         </button>
       </ion-col>

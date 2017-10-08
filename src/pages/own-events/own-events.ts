@@ -1,12 +1,6 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-
-/**
- * Generated class for the OwnEventsPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
+import { IonicPage, NavController, NavParams, Events } from 'ionic-angular';
+import { FirebaseProvider } from '../../providers/firebase/firebase';
 
 @IonicPage()
 @Component({
@@ -15,11 +9,36 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class OwnEventsPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  events: any;
+  loadingEvents: boolean;
+
+  constructor(public navCtrl: NavController, public navParams: NavParams,
+              public firePro:FirebaseProvider, public eventsPro: Events) {
+    this.initialize();
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad OwnEventsPage');
+    this.getOwnEvents();
+  }
+  initialize(){
+    this.events = [];
+    this.loadingEvents = true;
+  }
+
+  getOwnEvents(){
+    this.firePro.getEventsById().then( data => {
+      console.log(data);
+      this.events = data;
+      this.loadingEvents = false;
+    }).catch( error => {
+      this.loadingEvents = false;
+    });
+  }
+
+  eventDetail(event){
+    console.log(event);
+    this.eventsPro.publish('event:detail', event);
   }
 
 }

@@ -3,10 +3,10 @@ import { Nav, Platform, Events } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
-import { LoginPage } from '../pages/login/login';
 import { NearEventsPage } from "../pages/near-events/near-events"
 import { CreateEventsPage } from "../pages/create-events/create-events"
 import { MyEventsPage } from '../pages/my-events/my-events';
+import { LoginPage } from '../pages/login/login';
 
 
 @Component({
@@ -18,23 +18,23 @@ export class MyApp {
   rootPage: any = LoginPage;
 
   pages: Array<{title: string, icon:string, component: any}>;
-  user: {name:string, avatar: String};
+  user: {id:string, name:string, avatar: String};
 
   constructor(public platform: Platform, public statusBar: StatusBar, 
-              public splashScreen: SplashScreen, public events: Events) {
+              public splashScreen: SplashScreen, public eventsPro: Events) {
     this.initializeApp();
     this.pages = [
       {title: "Eventos Cercanos", icon:"home",component: NearEventsPage},
       {title: "Crear Evento", icon:"add",component: CreateEventsPage},
       {title: "Mis Eventos", icon: "person", component: MyEventsPage },
     ];
-    events.subscribe('user:login', (name,avatar) => {
-      this.setUser(name,avatar);
+    eventsPro.subscribe('user:login', (id,name,avatar) => {
+      this.setUser(id,name,avatar);
     });
   }
 
   initializeApp() {
-    this.user = {name:"",avatar:"assets/img/profiletest.png"}
+    this.user = {id:"",name:"",avatar:"assets/img/profiletest.png"}
     this.platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
@@ -48,7 +48,8 @@ export class MyApp {
       this.nav.setRoot(page.component);
   }
 
-  public setUser(name,avatar){
+  public setUser(id,name,avatar){
+    this.user.id = id;
     this.user.name = name;
     //TODO Uncomment if(avatar != "") this.user.avatar = avatar;
   }
