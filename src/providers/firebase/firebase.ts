@@ -99,6 +99,31 @@ export class FirebaseProvider {
     this.fireDB.list('/events/').remove(id);
   }
 
+  getEventByName(eventName) {
+      let events = [];
+      return new Promise((resolve, reject) => {
+          var ref = this.fireDB.database.ref('events').orderByChild("name");
+          ref.equalTo(eventName).once("value", data => {
+              data.forEach(a => {
+                  events.push(a.val());
+                  return false;
+              });
+          }).then(data => resolve(events))
+      });
+  }
 
+  getEventsByDates(startDate: Date, endDate: Date) {
+      return new Promise((resolve, reject) => {
+          let events = [];
+          var ref = this.fireDB.database.ref('events').orderByChild("date");
+          ref.startAt(startDate.toISOString()).endAt(endDate.toISOString()).once("value", data => {
+              console.log(data);
+              data.forEach(a => {
+                  events.push(a.val());
+                  return false;
+              });
+          }).then(data => resolve(events))
+      });
+  } 
 
 }
