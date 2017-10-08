@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
-import { AngularFireDatabase } from 'angularfire2/database';
+import { AngularFireDatabase  } from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { ConfigProvider } from '../config/config'
 
@@ -53,12 +53,18 @@ export class FirebaseProvider {
 
   //Events
   getEventsById() {
-    return new Promise((resolve, reject) => {
-      this.fireDB.list('/events/').subscribe( data => {
-        if(data.length > 0) resolve(data);
+      return new Promise((resolve, reject) => {
+          let data = this.fireDB.list('/events/')
+          console.log(data);
+          if (data) resolve(data)
+      });
+
+        /*.subscribe( data => {
+        console.log(data);
+        if(data) resolve(data);
         else console.log(data);
       });
-    })
+    })*/
   }
 
   getEvents() {
@@ -84,10 +90,10 @@ export class FirebaseProvider {
           this.configPro.presentToast("El evento se ha creado con exito");
           resolve(data);
         }
-      ).catch( (error) => {
+      )/*.catch( (error) => {
         console.log(error);
         this.configPro.presentToast("No se ha podido crear el evento");
-      });
+      });*/
     });
   }
  

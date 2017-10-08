@@ -18,10 +18,10 @@
 
 //Buttons
 .btnAccept {
-    background-color: color($colors,accept);
+  background-color: color($colors,greenU);
 }
 .btnCancel {
-    background-color: color($colors,cancel);
+  background-color: color($colors,redU);
 }
 .btnPlus {
     background-color: color($colors,plus);
@@ -67,31 +67,31 @@
 // Datepicker
 ionic2-datepicker {
   .datepicker-wrapper .datepicker-header {
-    background-color: color($colors, greenU) !important;
+    background-color: color($colors, violetU) !important;
   }
 
   .datepicker-wrapper .datepicker-header .weekday-header {
-    background-color: color($colors, greenU) !important;
+    background-color: color($colors, violetU) !important;
   }
 
   .datepicker-current {
     background-color: transparent !important;
-    color: color($colors, greenU) !important;
+    color: color($colors, violetU) !important;
     font-weight: bold;
   }
 
   .datepicker-temp {
-    background-color: color($colors, greenU) !important;
+    background-color: color($colors, violetU) !important;
     color: #fff !important;
   }
 
   .button {
-    background-color: color($colors, greenU) !important;
+    background-color: color($colors, violetU) !important;
     color: #fff;
   }
 
   .datepicker-footer > button:first-child {
-    background-color: color($colors, redU) !important;
+    background-color: color($colors, yellowU) !important;
     color: #fff;
   }
 }
