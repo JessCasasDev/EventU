@@ -21,14 +21,14 @@ export class MyApp {
   user: {id:string, name:string, avatar: String};
 
   constructor(public platform: Platform, public statusBar: StatusBar, 
-              public splashScreen: SplashScreen, public events: Events) {
+              public splashScreen: SplashScreen, public eventsPro: Events) {
     this.initializeApp();
     this.pages = [
       {title: "Eventos Cercanos", icon:"home",component: NearEventsPage},
       {title: "Crear Evento", icon:"add",component: CreateEventsPage},
       {title: "Mis Eventos", icon: "person", component: MyEventsPage },
     ];
-    events.subscribe('user:login', (id,name,avatar) => {
+    eventsPro.subscribe('user:login', (id,name,avatar) => {
       this.setUser(id,name,avatar);
     });
   }

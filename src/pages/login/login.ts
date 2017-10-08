@@ -16,7 +16,7 @@ export class LoginPage {
   password:String;
   user: any = [];
   constructor(public navCtrl: NavController, public navParams: NavParams,
-              public events: Events, public firePro: FirebaseProvider,
+              public eventsPro: Events, public firePro: FirebaseProvider,
               public configPro: ConfigProvider) {
     this.initialize();
   }
@@ -43,7 +43,7 @@ export class LoginPage {
     this.firePro.login(this.email, this.password).then(
       (data) => {
         this.user = data;
-        this.events.publish('user:login',this.user.uid,this.user.email,"url imagen");
+        this.eventsPro.publish('user:login',this.user.uid,this.user.email,"url imagen");
         this.navCtrl.setRoot(NearEventsPage);
       }
     );
