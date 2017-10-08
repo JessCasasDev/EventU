@@ -6,6 +6,7 @@ import { MyApp } from './app.component';
 
 import { AssistedEventsPage } from '../pages/assisted-events/assisted-events';
 import { CreateEventsPage } from '../pages/create-events/create-events';
+import { EventsDetailPage } from '../pages/events-detail/events-detail';
 import { LoginPage } from '../pages/login/login';
 import { MyEventsPage } from '../pages/my-events/my-events';
 import { NearEventsPage} from '../pages/near-events/near-events';
@@ -45,6 +46,8 @@ const firebaseConfig = {
     MyEventsPage,
     OwnEventsPage,
     AssistedEventsPage,
+    EventsDetailPage,
+
   ],
   imports: [
     BrowserModule,
@@ -66,6 +69,8 @@ const firebaseConfig = {
     MyEventsPage,
     OwnEventsPage,
     AssistedEventsPage,    
+    EventsDetailPage,
+    
   ],
   providers: [
     StatusBar,
