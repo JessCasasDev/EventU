@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Events } from 'ionic-angular';
 import { FirebaseProvider } from '../../providers/firebase/firebase';
-import { EventsDetailPage } from '../events-detail/events-detail';
 
 @IonicPage()
 @Component({
@@ -13,7 +12,8 @@ export class OwnEventsPage {
   events: any;
   loadingEvents: boolean;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public firePro:FirebaseProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams,
+              public firePro:FirebaseProvider, public eventsPro: Events) {
     this.initialize();
   }
 
@@ -27,7 +27,7 @@ export class OwnEventsPage {
   }
 
   getOwnEvents(){
-    this.firePro.getEvents().then( data => {
+    this.firePro.getEventsById().then( data => {
       console.log(data);
       this.events = data;
       this.loadingEvents = false;
@@ -37,7 +37,8 @@ export class OwnEventsPage {
   }
 
   eventDetail(event){
-    this.navCtrl.push(EventsDetailPage, {'event':event});
+    console.log(event);
+    this.eventsPro.publish('event:detail', event);
   }
 
 }

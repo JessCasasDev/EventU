@@ -27,11 +27,11 @@ export class CreateEventsPage {
     setPosition = true;
     marker = [];
 
-    localeString = {
-        monday: true,
-        weekdays: ['Lun', 'Mar', 'Miér', 'Jue', 'Vier', 'Sáb', 'Dom'],
-        months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-    };
+localeString = {
+    monday: true,
+    weekdays: ['Lun', 'Mar', 'Miér', 'Jue', 'Vier', 'Sáb', 'Dom'],
+    months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+};
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
       public firePro: FirebaseProvider, public configPro: ConfigProvider,
@@ -76,8 +76,10 @@ export class CreateEventsPage {
                     text: "Si",
                     handler: () => {
                         if (this.validateFields()) {
-                            this.firePro.addEvent(this.newEvent).then((data) =>
+                            this.firePro.addEvent(this.newEvent).then((data) =>{
+                                this.mymap.remove();
                                 this.navCtrl.setRoot(MyEventsPage)
+                            }
                             );
                         }
                           

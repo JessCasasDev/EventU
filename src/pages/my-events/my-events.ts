@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Events } from 'ionic-angular';
 import { OwnEventsPage } from '../own-events/own-events';
 import { AssistedEventsPage } from '../assisted-events/assisted-events';
+import { EventsDetailPage } from '../events-detail/events-detail';
 
 @IonicPage()
 @Component({
@@ -13,11 +14,19 @@ export class MyEventsPage {
   ownRoot = OwnEventsPage;
   assistedRoot = AssistedEventsPage;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public eventsPro:Events) {
+    this.eventsPro.subscribe("event:detail", event => {
+      this.goToEventDetail(event);
+    })
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad MyEventsPage');
+  }
+
+  goToEventDetail(event){
+    console.log(this.navCtrl.getViews());
+    this.navCtrl.push(EventsDetailPage, {'event':event});
   }
 
 }
