@@ -13,6 +13,9 @@
     "sourceMap": true,
     "target": "es5"
   },
+  "types": [
+    "firebase"
+  ],
   "include": [
     "src/**/*.ts"
   ],
