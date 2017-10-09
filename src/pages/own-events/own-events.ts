@@ -28,7 +28,6 @@ export class OwnEventsPage {
 
   getOwnEvents(){
     this.firePro.getEventsById().then( data => {
-      console.log(data);
       this.events = data;
       this.loadingEvents = false;
     }).catch( error => {
