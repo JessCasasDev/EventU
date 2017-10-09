@@ -17,15 +17,19 @@ export class MyEventsPage {
   constructor(public navCtrl: NavController, public navParams: NavParams, public eventsPro:Events) {
     this.eventsPro.subscribe("event:detail", event => {
       this.goToEventDetail(event);
-    })
+    });
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad MyEventsPage');
   }
 
+  ionViewWillLeave(){
+    this.eventsPro.unsubscribe("event:detail");
+    console.log("unsubscribe");
+  }
+
   goToEventDetail(event){
-    console.log(this.navCtrl.getViews());
     this.navCtrl.push(EventsDetailPage, {'event':event});
   }
 

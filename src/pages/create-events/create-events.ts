@@ -44,6 +44,11 @@ localeString = {
       this.loadMap();
   }
 
+  ionViewWillLeave(){
+    this.mymap.remove();
+    console.log("closed");
+  }
+
   initialize() {
       this.lat = this.geoLoc.lat;
       this.lng = this.geoLoc.lng;
@@ -77,7 +82,6 @@ localeString = {
                     handler: () => {
                         if (this.validateFields()) {
                             this.firePro.addEvent(this.newEvent).then((data) =>{
-                                this.mymap.remove();
                                 this.navCtrl.setRoot(MyEventsPage)
                             }
                             );
