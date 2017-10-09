@@ -15,16 +15,16 @@ export class MyEventsPage {
   assistedRoot = AssistedEventsPage;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public eventsPro:Events) {
+  }
+
+  ionViewDidLoad() {
+    console.log('ionViewDidLoad MyEventsPage');
     this.eventsPro.subscribe("event:detail", event => {
       this.goToEventDetail(event);
     });
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad MyEventsPage');
-  }
-
-  ionViewWillLeave(){
+  ionViewWillUnload(){
     this.eventsPro.unsubscribe("event:detail");
     console.log("unsubscribe");
   }
