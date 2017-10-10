@@ -9,6 +9,7 @@ import { MyEventsPage } from '../pages/my-events/my-events';
 import { LoginPage } from '../pages/login/login';
 
 import { FirebaseProvider } from '../providers/firebase/firebase'
+import { ConfigProvider } from '../providers/config/config'
 
 @Component({
   templateUrl: 'app.html'
@@ -23,7 +24,7 @@ export class MyApp {
 
   constructor(public platform: Platform, public statusBar: StatusBar, 
               public splashScreen: SplashScreen, public eventsPro: Events,
-              public firePro: FirebaseProvider) {
+              public firePro: FirebaseProvider, public configPro: ConfigProvider) {
     this.initializeApp();
     this.pages = [
       {title: "Eventos Cercanos", icon:"home",component: NearEventsPage},
@@ -57,9 +58,11 @@ export class MyApp {
   }
 
   logout(){
-    this.firePro.logout().then( data =>
-      this.nav.setRoot(LoginPage)
-    );
+    this.configPro.presentLoading("Cerrando sesión");
+    this.firePro.logout().then( data => {
+      this.nav.setRoot(LoginPage);
+      this.configPro.dismissLoading();
+    });
   }
   
 }

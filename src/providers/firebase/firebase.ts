@@ -27,7 +27,11 @@ export class FirebaseProvider {
         }
     ).catch((error) => {
       console.log(error);
-      this.configPro.presentToast("Correo y/o contraseña incorrectos");
+      if(error.code == "auth/network-request-failed"){
+        reject(error);
+        this.configPro.presentToast("Verifica tu conexión a internet");
+      }
+      else this.configPro.presentToast("Correo y/o contraseña incorrectos");
       });
     });
   }

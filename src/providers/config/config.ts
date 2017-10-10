@@ -2,14 +2,16 @@ import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
 
-import { ToastController } from 'ionic-angular';
+import { LoadingController, ToastController } from 'ionic-angular';
 
 @Injectable()
 export class ConfigProvider {
 
   domain: string = "@unal.edu.co";
+  loading: any;
 
-  constructor(public http: Http, public toastCtrl: ToastController) {
+  constructor(public http: Http, public toastCtrl: ToastController,
+              public loadingCtrl: LoadingController) {
     console.log('Hello ConfigProvider Provider');
   }
 
@@ -35,7 +37,7 @@ export class ConfigProvider {
         this.presentToast("La contraseña es muy corta o contiene caracteres especiales");
       }
     }
-    else this.presentToast("Debe ser un correo @unal");
+    else this.presentToast("Debes ingresar un usuario valido");
     return pass;
   }
 
@@ -92,5 +94,18 @@ export class ConfigProvider {
       duration: 3000
     });
     toast.present();
+  }
+
+  presentLoading(message){
+    this.loading = this.loadingCtrl.create({
+      spinner: 'dots',
+      content:message
+    });
+
+    this.loading.present();
+  }
+
+  dismissLoading(){
+    this.loading.dismiss();
   }
 }
