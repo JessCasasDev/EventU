@@ -51,6 +51,16 @@ export class FirebaseProvider {
     });
   }
 
+  logout(){
+    return new Promise((resolve,reject) => {
+      this.fireAuth.auth.signOut().then( data => resolve(data))
+      .catch( error => {
+        console.log(error);
+        this.configPro.presentToast("No se ha podido cerrar sesión")
+      });
+    })
+  }
+
   //Events
   getEvents() {
       return new Promise((resolve, reject) => {
