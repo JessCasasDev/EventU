@@ -50,8 +50,8 @@ localeString = {
   }
 
   initialize() {
-      this.lat = this.geoLoc.lat;
-      this.lng = this.geoLoc.lng;
+    this.lat = this.geoLoc.lat;
+    this.lng = this.geoLoc.lng;
     this.date = new Date();
     this.newEvent = {name: "", description: "", phone: null,date: "", coordinates:{lat:null, lng:null}};
   }

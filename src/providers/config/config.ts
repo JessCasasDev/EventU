@@ -7,6 +7,8 @@ import { ToastController } from 'ionic-angular';
 @Injectable()
 export class ConfigProvider {
 
+  domain: string = "@unal.edu.co";
+
   constructor(public http: Http, public toastCtrl: ToastController) {
     console.log('Hello ConfigProvider Provider');
   }
@@ -15,6 +17,18 @@ export class ConfigProvider {
   //Validations
   validateInputs(email, password){
     let pass = this.validateEmail(email);
+    if(pass){
+      if(!this.validatePassword(password)) {
+        pass = false;
+        this.presentToast("La contraseña es muy corta o contiene caracteres especiales");
+      }
+    }
+    else this.presentToast("Debe ser un correo @unal");
+    return pass;
+  }
+
+  validateInputsLogin(email, password){
+    let pass = this.validateEmailLogin(email);
     if(pass){
       if(!this.validatePassword(password)) {
         pass = false;
@@ -37,6 +51,15 @@ export class ConfigProvider {
     return pass;
   }
 
+  validateEmailLogin(email){
+    let pass = false;
+    email = email.replace(/ /g,'');
+    email = email.trim();
+    email = email.toLowerCase();
+    if(email != "") pass = true;
+    return pass;
+  }
+
   validatePassword(password){
     let index = password.indexOf(" ");
     let pass = false;
@@ -51,8 +74,9 @@ export class ConfigProvider {
   }
 
   validatePhone(number: number){
+    if(number == null) return true;
     let phone = number.toString();
-    if(phone == null || !( phone.length == 7 || phone.length == 10 ) ) return false;
+    if(!( phone.length == 7 || phone.length == 10 ) ) return false;
     return true;
   }
 

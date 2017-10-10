@@ -1,7 +1,7 @@
 <ion-content padding>
   <ion-list *ngIf="!loadingEvents && events.length > 0">
     <button ion-item *ngFor="let event of events" (click)="eventDetail(event)">
-      {{event.name}} {{event.description}}
+      {{event.name}}
     </button>
   </ion-list>
   <ion-list *ngIf="!loadingEvents && events.length == 0">
