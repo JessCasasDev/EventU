@@ -5,7 +5,9 @@ import { FirebaseProvider } from '../../providers/firebase/firebase'
 import { ConfigProvider } from '../../providers/config/config'
 import { GeolocationProvider } from '../../providers/geolocation/geolocation';
 import { MyEventsPage } from '../my-events/my-events'
-import * as Leaflet from 'leaflet';
+import 'leaflet';
+
+declare let L: any;
 
 @IonicPage()
 @Component({
@@ -24,7 +26,6 @@ export class CreateEventsPage {
     mymap: any;
     lat: number;
     lng: number;
-    setPosition = true;
     marker = [];
 
 localeString = {
@@ -44,9 +45,9 @@ localeString = {
       this.loadMap();
   }
 
-  ionViewWillLeave(){
-    this.mymap.remove();
-    console.log("closed");
+  ionViewCanLeave() {
+      console.log("ionViewCanLeave")
+      document.getElementById("mapCreateEvent").outerHTML = "";
   }
 
   initialize() {
@@ -74,8 +75,7 @@ localeString = {
                 {
                     text: "No",
                     handler: () => {
-                        this.setPosition = true;
-                        this.removeMarker();
+                        //do nothing
                     }
                 }, {
                     text: "Si",
@@ -115,24 +115,26 @@ localeString = {
   }
 
   loadMap() {
-      this.mymap = Leaflet.map('mapCreateEvent').setView([this.lat, this.lng], 16);
-      Leaflet.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
+      this.mymap = L.map('mapCreateEvent').setView([this.lat, this.lng], 16);
+      L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
           attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(this.mymap);
   }
+   
 
   setEventPosition() {
       this.mymap.on('click', (e) => {
-          if (this.setPosition) {
-              this.setMarker(e.latlng.lat, e.latlng.lng);
-              this.setPosition = false;
+          console.log(this.marker)
+          if (this.marker !== undefined || this.marker === null) {
+              this.removeMarker();
           }
-              
+          this.setMarker(e.latlng.lat, e.latlng.lng);
+          
       });
   }
 
   setMarker(lat: number, lng: number) {
-      this.marker.push(Leaflet.marker([lat, lng]).addTo(this.mymap));
+      this.marker.push(L.marker([lat, lng]).addTo(this.mymap));
       this.newEvent.coordinates.lat = lat;
       this.newEvent.coordinates.lng = lng;
   }
@@ -140,6 +142,8 @@ localeString = {
   removeMarker() {
       this.newEvent.coordinates.lat = null;
       this.newEvent.coordinates.lng = null;
-      this.marker.forEach(item => this.mymap.removeLayer(item));        
+      this.marker.forEach(item => this.mymap.removeLayer(item));
+      if (this.marker.length > 0)
+        this.marker.pop();
   }
 }

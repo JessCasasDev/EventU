@@ -68,19 +68,12 @@ export class FirebaseProvider {
   //Events
   getEvents() {
       return new Promise((resolve, reject) => {
-          let data = this.fireDB.list('/events/').valueChanges().subscribe( data =>{
+          this.fireDB.list('/events/').valueChanges().subscribe( data =>{
             console.log(data);
             if(data) resolve(data);
             else console.log(data);
           })
       });
-
-        /*.subscribe( data => {
-        console.log(data);
-        if(data) resolve(data);
-        else console.log(data);
-      });
-    })*/
   }
 
   getEventsById() {
@@ -115,11 +108,11 @@ export class FirebaseProvider {
     this.fireDB.list('/events/').remove(id);
   }
 
-  getEventByName(eventName) {
+  getEventByName(event) {
       let events = [];
       return new Promise((resolve, reject) => {
-          var ref = this.fireDB.database.ref('events').orderByChild("name");
-          ref.equalTo(eventName).once("value", data => {
+          var ref = this.fireDB.database.ref('events').orderByKey();
+          ref.equalTo(event).once("value", data => {
               data.forEach(a => {
                 let event = a.val();
                 event.id = a.key;

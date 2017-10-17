@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { GeolocationProvider } from '../../providers/geolocation/geolocation';
+import { ConfigProvider } from '../../providers/config/config';
 import { DatePickerDirective } from 'ion-datepicker';
 import { FirebaseProvider } from './../../providers/firebase/firebase';
 import { EventsDetailPage } from '../events-detail/events-detail';
@@ -31,7 +32,7 @@ export class NearEventsPage {
       months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
   };
 
-  constructor(public navCtrl: NavController, public navParams: NavParams,
+  constructor(public navCtrl: NavController, public navParams: NavParams, public configProvider: ConfigProvider,
               public geoLoc: GeolocationProvider, public firePro: FirebaseProvider) {
       this.initialize();
   }
@@ -41,7 +42,7 @@ export class NearEventsPage {
     this.loadMap();
     this.showEvents();
   }
-
+    
   initialize(){
     this.lat = this.geoLoc.lat;
     this.lng = this.geoLoc.lng;
@@ -53,11 +54,17 @@ export class NearEventsPage {
       let futureDate = new Date();
       futureDate.setDate(futureDate.getDate() + 5) // 5 Days more
       console.log(this.date, futureDate);
-      this.firePro.getEventsByDates(this.date, futureDate).then(result => {
-          this.events = result;
+      this.firePro.getEventsByDates(this.date, futureDate).then( (result : any) => {
           console.log(result);
-          //Inside the method in order to get the list full before the loadIcons call
-          this.loadIcons();
+          if (result.length !== 0) {
+              this.events = result;
+              //Inside the method in order to get the list full before the loadIcons call
+              this.loadIcons();
+          }
+          else {
+              this.configProvider.presentToast("No se encontraron Eventos, por favor revisa tu conexión a internet");
+          }
+          
       }).catch(err => { console.log(err) })
   }
 
@@ -73,7 +80,6 @@ export class NearEventsPage {
       let popup = L.popup();
        
       for (let event of this.events) {
-          console.log(event.id);
           let marker = L.marker(event.coordinates).on('click', (e) => {
               marker.bindPopup(popup);
               popup.setContent(
@@ -83,10 +89,11 @@ export class NearEventsPage {
                   (event.description.lenght > 6 ? event.description.substring(6) + "..." : event.description)
                   + "</p>" +
                   "<button class='button button-md button-default button-default-md btnAccept' onClick=\"" +
-                  "document.getElementById('eventId1').value='" + event.name + "'; " +
+                  "document.getElementById('eventId1').value='" + event.id + "'; " +
                   "document.getElementById('eventId1').click();" +
                   "\">Ver Detalle</button>");
               marker.openPopup();
+             // this.open(e);
               
           });
           this.markers.addLayer(marker);
@@ -94,9 +101,12 @@ export class NearEventsPage {
       this.mymap.addLayer(this.markers);
   }
 
+  open(event) {
+      event.target.marker.openPopup();
+  }
+
   goToEventDetail(event) {
       this.firePro.getEventByName(event).then(result => {
-          console.log(result);
           if (result[0]) {
               this.navCtrl.push(EventsDetailPage, { 'event': result[0] });
           }
