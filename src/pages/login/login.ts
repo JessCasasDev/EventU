@@ -35,17 +35,21 @@ export class LoginPage {
   }
 
   login(){
-    if(this.configPro.validateInputs(this.email, this.password)) this.authUser();
+    this.configPro.presentLoading("Validando Credenciales");
+    if(this.configPro.validateInputsLogin(this.email, this.password)) this.authUser();
   }
 
 
   authUser(){
-    this.firePro.login(this.email, this.password).then(
+    this.firePro.login(this.email + this.configPro.domain, this.password).then(
       (data) => {
         this.user = data;
         this.eventsPro.publish('user:login',this.user.uid,this.user.email,"url imagen");
         this.navCtrl.setRoot(NearEventsPage);
+        this.configPro.dismissLoading();
       }
-    );
+    ).catch( error => {
+      this.configPro.dismissLoading();
+    });
   }
 }

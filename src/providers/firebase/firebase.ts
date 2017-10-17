@@ -27,7 +27,11 @@ export class FirebaseProvider {
         }
     ).catch((error) => {
       console.log(error);
-      this.configPro.presentToast("Correo y/o contraseña incorrectos");
+      if(error.code == "auth/network-request-failed"){
+        reject(error);
+        this.configPro.presentToast("Verifica tu conexión a internet");
+      }
+      else this.configPro.presentToast("Correo y/o contraseña incorrectos");
       });
     });
   }
@@ -49,6 +53,16 @@ export class FirebaseProvider {
           this.configPro.presentToast("El correo ya se encuentra registrado, por favor valida tu correo")
       });
     });
+  }
+
+  logout(){
+    return new Promise((resolve,reject) => {
+      this.fireAuth.auth.signOut().then( data => resolve(data))
+      .catch( error => {
+        console.log(error);
+        this.configPro.presentToast("No se ha podido cerrar sesión")
+      });
+    })
   }
 
   //Events
@@ -75,7 +89,9 @@ export class FirebaseProvider {
       var ref = this.fireDB.database.ref('events').orderByChild("user");
       ref.equalTo(this.user.uid).once("value", data => {
         data.forEach( a => {
-          events.push(a.val());
+          let event = a.val();
+          event.id = a.key;
+          events.push(event);
           return false;
         });
       }).then( data => resolve(events))
@@ -105,8 +121,10 @@ export class FirebaseProvider {
           var ref = this.fireDB.database.ref('events').orderByChild("name");
           ref.equalTo(eventName).once("value", data => {
               data.forEach(a => {
-                  events.push(a.val());
-                  return false;
+                let event = a.val();
+                event.id = a.key;
+                events.push(event);
+                return false;
               });
           }).then(data => resolve(events))
       });
@@ -119,8 +137,10 @@ export class FirebaseProvider {
           ref.startAt(startDate.toISOString()).endAt(endDate.toISOString()).once("value", data => {
               console.log(data);
               data.forEach(a => {
-                  events.push(a.val());
-                  return false;
+                let event = a.val();
+                event.id = a.key;
+                events.push(event);
+                return false;
               });
           }).then(data => resolve(events))
       });

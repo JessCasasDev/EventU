@@ -8,6 +8,8 @@ import { CreateEventsPage } from "../pages/create-events/create-events"
 import { MyEventsPage } from '../pages/my-events/my-events';
 import { LoginPage } from '../pages/login/login';
 
+import { FirebaseProvider } from '../providers/firebase/firebase'
+import { ConfigProvider } from '../providers/config/config'
 
 @Component({
   templateUrl: 'app.html'
@@ -21,7 +23,8 @@ export class MyApp {
   user: {id:string, name:string, avatar: String};
 
   constructor(public platform: Platform, public statusBar: StatusBar, 
-              public splashScreen: SplashScreen, public eventsPro: Events) {
+              public splashScreen: SplashScreen, public eventsPro: Events,
+              public firePro: FirebaseProvider, public configPro: ConfigProvider) {
     this.initializeApp();
     this.pages = [
       {title: "Eventos Cercanos", icon:"home",component: NearEventsPage},
@@ -48,9 +51,18 @@ export class MyApp {
       this.nav.setRoot(page.component);
   }
 
-  public setUser(id,name,avatar){
+  setUser(id,name,avatar){
     this.user.id = id;
     this.user.name = name;
     //TODO Uncomment if(avatar != "") this.user.avatar = avatar;
   }
+
+  logout(){
+    this.configPro.presentLoading("Cerrando sesión");
+    this.firePro.logout().then( data => {
+      this.nav.setRoot(LoginPage);
+      this.configPro.dismissLoading();
+    });
+  }
+  
 }

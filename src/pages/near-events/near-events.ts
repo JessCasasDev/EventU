@@ -18,7 +18,6 @@ declare let L: any;
 })
 export class NearEventsPage {
     @ViewChild(DatePickerDirective) private datePicker: DatePickerDirective;
-
     events: any;
   mymap: any;
   lat: number;
@@ -47,7 +46,6 @@ export class NearEventsPage {
     this.lat = this.geoLoc.lat;
     this.lng = this.geoLoc.lng;
     this.date = new Date();
-    
   }
 
   showEvents() {

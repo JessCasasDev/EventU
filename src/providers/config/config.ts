@@ -2,12 +2,16 @@ import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
 
-import { ToastController } from 'ionic-angular';
+import { LoadingController, ToastController } from 'ionic-angular';
 
 @Injectable()
 export class ConfigProvider {
 
-  constructor(public http: Http, public toastCtrl: ToastController) {
+  domain: string = "@unal.edu.co";
+  loading: any;
+
+  constructor(public http: Http, public toastCtrl: ToastController,
+              public loadingCtrl: LoadingController) {
     console.log('Hello ConfigProvider Provider');
   }
 
@@ -25,6 +29,18 @@ export class ConfigProvider {
     return pass;
   }
 
+  validateInputsLogin(email, password){
+    let pass = this.validateEmailLogin(email);
+    if(pass){
+      if(!this.validatePassword(password)) {
+        pass = false;
+        this.presentToast("La contraseña es muy corta o contiene caracteres especiales");
+      }
+    }
+    else this.presentToast("Debes ingresar un usuario valido");
+    return pass;
+  }
+
   validateEmail(email){
     let pass = false;
     let index = email.indexOf("@");
@@ -34,6 +50,15 @@ export class ConfigProvider {
     if(email != "" && index != -1){
       if(email.substring(index, email.length) == "@unal.edu.co") pass = true;
     }
+    return pass;
+  }
+
+  validateEmailLogin(email){
+    let pass = false;
+    email = email.replace(/ /g,'');
+    email = email.trim();
+    email = email.toLowerCase();
+    if(email != "") pass = true;
     return pass;
   }
 
@@ -51,8 +76,9 @@ export class ConfigProvider {
   }
 
   validatePhone(number: number){
+    if(number == null) return true;
     let phone = number.toString();
-    if(phone == null || !( phone.length == 7 || phone.length == 10 ) ) return false;
+    if(!( phone.length == 7 || phone.length == 10 ) ) return false;
     return true;
   }
 
@@ -68,5 +94,18 @@ export class ConfigProvider {
       duration: 3000
     });
     toast.present();
+  }
+
+  presentLoading(message){
+    this.loading = this.loadingCtrl.create({
+      spinner: 'dots',
+      content:message
+    });
+
+    this.loading.present();
+  }
+
+  dismissLoading(){
+    this.loading.dismiss();
   }
 }

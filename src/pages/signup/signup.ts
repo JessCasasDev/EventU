@@ -28,12 +28,16 @@ export class SignupPage {
 
   signUp(){
     if(this.configPro.validateInputs(this.email, this.password)){
+      this.configPro.presentLoading("Registrando en EventU");
       this.firePro.singUp(this.email, this.password).then(
         data => {
           console.log(data);
           this.login();
+          this.configPro.dismissLoading();
         }
-      );
+      ).catch( data => {
+        this.configPro.dismissLoading();
+      });
     }
   }
 

@@ -15,7 +15,7 @@
     </ion-row>
     <ion-row>
       <ion-col col-12>
-        <ion-item>
+        <ion-item text-wrap>
           {{event.description}}
         </ion-item>
       </ion-col>
@@ -24,6 +24,13 @@
       <ion-col col-12>
         <ion-item>
           {{event.date | date}}
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="event.phone != null">
+      <ion-col col-12>
+        <ion-item>
+          {{event.phone}}
         </ion-item>
       </ion-col>
     </ion-row>
