@@ -62,7 +62,7 @@ export class NearEventsPage {
               this.loadIcons();
           }
           else {
-              this.configProvider.presentToast("No se encontraron Eventos, por favor revisa tu conexión a internet");
+              this.configProvider.presentToast("No se encontraron Eventos en la semana");
           }
           
       }).catch(err => { console.log(err) })
@@ -117,9 +117,32 @@ export class NearEventsPage {
   
   changeDate(event) {
       this.date = event;
+      this.removeIcons();
+      this.date.setHours(0, 0, 0, 0); //It is going to show all the events by date, no matter hours
+      let futureDate = new Date();
+      futureDate.setDate(event.getDate() );
+      futureDate.setMonth(event.getMonth());
+      futureDate.setFullYear(event.getFullYear());
+      futureDate.setHours(23);
+      this.firePro.getEventsByDates(this.date, futureDate).then((result: any) => {
+          console.log(result);
+          if (result.length !== 0) {
+              this.events = result;
+              //Inside the method in order to get the list full before the loadIcons call
+              this.loadIcons();
+          }
+          else {
+              this.configProvider.presentToast("No se encontraron Eventos en este día");
+          }
+
+      }).catch(err => { console.log(err) })
   }
 
   getEvent(){
       this.firePro.getEvents();
+  }
+
+  removeIcons() {
+      this.mymap.removeLayer(this.markers);
   }
 }
