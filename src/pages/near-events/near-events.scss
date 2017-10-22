@@ -10,8 +10,11 @@ page-near-events {
     font-size: medium;
   }
 
-  .btnAccept {
-    background-color: color($colors, violetU);
-    margin-left: 2.5em;
+  .time-date {
+    margin-bottom: -10px;
+  }
+
+  .event-date {
+    margin-bottom: -10px;
   }
 }

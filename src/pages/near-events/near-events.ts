@@ -50,9 +50,9 @@ export class NearEventsPage {
   }
 
   showEvents() {
-      this.date.setHours(0,0,0,0); //Change if we are going to set the hpurs
+      this.date.setHours(0,0,0,0); //It is going to show all the events by date, no matter hours
       let futureDate = new Date();
-      futureDate.setDate(futureDate.getDate() + 5) // 5 Days more
+      futureDate.setDate(futureDate.getDate() + 7) // 7 Days more
       console.log(this.date, futureDate);
       this.firePro.getEventsByDates(this.date, futureDate).then( (result : any) => {
           console.log(result);
@@ -83,8 +83,9 @@ export class NearEventsPage {
               marker.bindPopup(popup);
               popup.setContent(
                   "<p class='event-title'>" + event.name + "</p><p class='event-date'> " +
-                  moment(event.date).locale('es').format("dddd, DD MMMM, YYYY, h:mm a") +
-                  "</p><p class='event-description'>" +
+                  moment(event.date).locale('es').format("dddd, DD MMMM, YYYY") +
+                  "</p><p class='time-date'>Hora: " + event.begin_time + "-" + event.end_time + "</p>" +
+                  "<p class='event-description'> " +
                   (event.description.lenght > 6 ? event.description.substring(6) + "..." : event.description)
                   + "</p>" +
                   "<ion-row justify-content-center><button class='button button-md button-default button-default-md btnAccept' onClick=\"" +

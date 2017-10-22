@@ -21,8 +21,10 @@ export class CreateEventsPage {
     name: string;
     description: string;
     date: Date;
+    begin_time: Date;
+    end_time: Date;
     limit = 20;
-    newEvent: {name: string, description: string, phone: number, date: string, coordinates: { lat: number, lng:number }};
+    newEvent: {name: string, description: string, phone: number, date: string, begin_time : string, end_time : string, coordinates: { lat: number, lng:number }};
     mymap: any;
     lat: number;
     lng: number;
@@ -54,7 +56,7 @@ localeString = {
     this.lat = this.geoLoc.lat;
     this.lng = this.geoLoc.lng;
     this.date = new Date();
-    this.newEvent = {name: "", description: "", phone: null,date: "", coordinates:{lat:null, lng:null}};
+    this.newEvent = {name: "", description: "", phone: null,date: "", begin_time: "", end_time: "", coordinates:{lat:null, lng:null}};
   }
     
   showCalendar() {
@@ -66,7 +68,7 @@ localeString = {
   }
 
   createEvent(){
-    if(this.validateFields()){
+      if (this.validateFields()) {
         this.newEvent.date = this.date.toISOString();
         let alert = this.alertCtrl.create({
             title: "Confirmar",
@@ -81,6 +83,7 @@ localeString = {
                     text: "Si",
                     handler: () => {
                         if (this.validateFields()) {
+                            console.log(this.newEvent);
                             this.firePro.addEvent(this.newEvent).then((data) =>{
                                 this.navCtrl.setRoot(MyEventsPage)
                             }
@@ -94,9 +97,9 @@ localeString = {
     }
   }
     
-  validateFields(){
+  validateFields() {
     if(!this.configPro.validateNoEmpty(this.newEvent.name)){
-      this.configPro.presentToast("Dale un nombre a tu evento no puede ir vacia");
+      this.configPro.presentToast("Dale un nombre a tu evento, no puede ir vacio");
       return false;
     };
     if(!this.configPro.validateNoEmpty(this.newEvent.description)){
@@ -111,8 +114,13 @@ localeString = {
       this.configPro.presentToast("Dale una ubicación a tu evento");
       return false;
     };
+    if (!this.configPro.validateTime(this.begin_time, this.end_time)) {
+        this.configPro.presentToast("La hora final debe ser mayor a la actual");
+        return false;
+    }
     return true;
   }
+
 
   loadMap() {
       this.mymap = L.map('mapCreateEvent').setView([this.lat, this.lng], 16);
