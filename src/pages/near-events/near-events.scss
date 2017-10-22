@@ -5,9 +5,13 @@ page-near-events {
     font-weight: bold;
   }
 
-  .event-description{
+  .event-description {
     text-align: justify;
     font-size: medium;
+  }
 
+  .btnAccept {
+    background-color: color($colors, violetU);
+    margin-left: 2.5em;
   }
 }

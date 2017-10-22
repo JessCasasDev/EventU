@@ -77,8 +77,7 @@ export class NearEventsPage {
 
   loadIcons() {
       this.markers = L.markerClusterGroup();
-      let popup = L.popup();
-       
+      let popup = L.popup();       
       for (let event of this.events) {
           let marker = L.marker(event.coordinates).on('click', (e) => {
               marker.bindPopup(popup);
@@ -88,12 +87,10 @@ export class NearEventsPage {
                   "</p><p class='event-description'>" +
                   (event.description.lenght > 6 ? event.description.substring(6) + "..." : event.description)
                   + "</p>" +
-                  "<button class='button button-md button-default button-default-md btnAccept' onClick=\"" +
+                  "<ion-row justify-content-center><button class='button button-md button-default button-default-md btnAccept' onClick=\"" +
                   "document.getElementById('eventId1').value='" + event.id + "'; " +
                   "document.getElementById('eventId1').click();" +
-                  "\">Ver Detalle</button>");
-              marker.openPopup();
-             // this.open(e);
+                  "\">Ver Detalle</button></ion-row>");
               
           });
           this.markers.addLayer(marker);
