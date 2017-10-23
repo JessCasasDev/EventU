@@ -26,6 +26,16 @@
           {{event.date | date}}
         </ion-item>
       </ion-col>
+      <ion-col col-6>
+        <ion-item>
+          {{event.begin_time}}
+        </ion-item>
+      </ion-col>
+      <ion-col col-6>
+        <ion-item>
+          {{event.end_time}}
+        </ion-item>
+      </ion-col>
     </ion-row>
     <ion-row *ngIf="event.phone != null">
       <ion-col col-12>

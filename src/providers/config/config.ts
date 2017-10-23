@@ -87,6 +87,11 @@ export class ConfigProvider {
     else return true;
   }
 
+  validateTime(initTime: Date, endTime: Date) {
+      if (endTime < initTime) return false;
+      return true;
+  }
+    
   //Alerts
   presentToast(message){
     let toast = this.toastCtrl.create({
@@ -108,4 +113,5 @@ export class ConfigProvider {
   dismissLoading(){
     this.loading.dismiss();
   }
+    
 }

@@ -5,9 +5,16 @@ page-near-events {
     font-weight: bold;
   }
 
-  .event-description{
+  .event-description {
     text-align: justify;
     font-size: medium;
+  }
 
+  .time-date {
+    margin-bottom: -10px;
+  }
+
+  .event-date {
+    margin-bottom: -10px;
   }
 }

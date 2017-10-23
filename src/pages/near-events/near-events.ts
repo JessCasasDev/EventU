@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { GeolocationProvider } from '../../providers/geolocation/geolocation';
+import { ConfigProvider } from '../../providers/config/config';
 import { DatePickerDirective } from 'ion-datepicker';
 import { FirebaseProvider } from './../../providers/firebase/firebase';
 import { EventsDetailPage } from '../events-detail/events-detail';
@@ -31,7 +32,7 @@ export class NearEventsPage {
       months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
   };
 
-  constructor(public navCtrl: NavController, public navParams: NavParams,
+  constructor(public navCtrl: NavController, public navParams: NavParams, public configProvider: ConfigProvider,
               public geoLoc: GeolocationProvider, public firePro: FirebaseProvider) {
       this.initialize();
   }
@@ -41,7 +42,7 @@ export class NearEventsPage {
     this.loadMap();
     this.showEvents();
   }
-
+    
   initialize(){
     this.lat = this.geoLoc.lat;
     this.lng = this.geoLoc.lng;
@@ -49,15 +50,21 @@ export class NearEventsPage {
   }
 
   showEvents() {
-      this.date.setHours(0,0,0,0); //Change if we are going to set the hpurs
+      this.date.setHours(0,0,0,0); //It is going to show all the events by date, no matter hours
       let futureDate = new Date();
-      futureDate.setDate(futureDate.getDate() + 5) // 5 Days more
+      futureDate.setDate(futureDate.getDate() + 7) // 7 Days more
       console.log(this.date, futureDate);
-      this.firePro.getEventsByDates(this.date, futureDate).then(result => {
-          this.events = result;
+      this.firePro.getEventsByDates(this.date, futureDate).then( (result : any) => {
           console.log(result);
-          //Inside the method in order to get the list full before the loadIcons call
-          this.loadIcons();
+          if (result.length !== 0) {
+              this.events = result;
+              //Inside the method in order to get the list full before the loadIcons call
+              this.loadIcons();
+          }
+          else {
+              this.configProvider.presentToast("No se encontraron Eventos en la semana");
+          }
+          
       }).catch(err => { console.log(err) })
   }
 
@@ -70,23 +77,21 @@ export class NearEventsPage {
 
   loadIcons() {
       this.markers = L.markerClusterGroup();
-      let popup = L.popup();
-       
+      let popup = L.popup();       
       for (let event of this.events) {
-          console.log(event.id);
           let marker = L.marker(event.coordinates).on('click', (e) => {
               marker.bindPopup(popup);
               popup.setContent(
                   "<p class='event-title'>" + event.name + "</p><p class='event-date'> " +
-                  moment(event.date).locale('es').format("dddd, DD MMMM, YYYY, h:mm a") +
-                  "</p><p class='event-description'>" +
+                  moment(event.date).locale('es').format("dddd, DD MMMM, YYYY") +
+                  "</p><p class='time-date'>Hora: " + event.begin_time + "-" + event.end_time + "</p>" +
+                  "<p class='event-description'> " +
                   (event.description.lenght > 6 ? event.description.substring(6) + "..." : event.description)
                   + "</p>" +
-                  "<button class='button button-md button-default button-default-md btnAccept' onClick=\"" +
-                  "document.getElementById('eventId1').value='" + event.name + "'; " +
+                  "<ion-row justify-content-center><button class='button button-md button-default button-default-md btnAccept' onClick=\"" +
+                  "document.getElementById('eventId1').value='" + event.id + "'; " +
                   "document.getElementById('eventId1').click();" +
-                  "\">Ver Detalle</button>");
-              marker.openPopup();
+                  "\">Ver Detalle</button></ion-row>");
               
           });
           this.markers.addLayer(marker);
@@ -94,9 +99,12 @@ export class NearEventsPage {
       this.mymap.addLayer(this.markers);
   }
 
+  open(event) {
+      event.target.marker.openPopup();
+  }
+
   goToEventDetail(event) {
       this.firePro.getEventByName(event).then(result => {
-          console.log(result);
           if (result[0]) {
               this.navCtrl.push(EventsDetailPage, { 'event': result[0] });
           }
@@ -109,9 +117,32 @@ export class NearEventsPage {
   
   changeDate(event) {
       this.date = event;
+      this.removeIcons();
+      this.date.setHours(0, 0, 0, 0); //It is going to show all the events by date, no matter hours
+      let futureDate = new Date();
+      futureDate.setDate(event.getDate() );
+      futureDate.setMonth(event.getMonth());
+      futureDate.setFullYear(event.getFullYear());
+      futureDate.setHours(23);
+      this.firePro.getEventsByDates(this.date, futureDate).then((result: any) => {
+          console.log(result);
+          if (result.length !== 0) {
+              this.events = result;
+              //Inside the method in order to get the list full before the loadIcons call
+              this.loadIcons();
+          }
+          else {
+              this.configProvider.presentToast("No se encontraron Eventos en este día");
+          }
+
+      }).catch(err => { console.log(err) })
   }
 
   getEvent(){
       this.firePro.getEvents();
+  }
+
+  removeIcons() {
+      this.mymap.removeLayer(this.markers);
   }
 }
