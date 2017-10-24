@@ -24,7 +24,10 @@ export class CreateEventsPage {
     begin_time: Date;
     end_time: Date;
     limit = 20;
-    newEvent: {name: string, description: string, phone: number, date: string, begin_time : string, end_time : string, coordinates: { lat: number, lng:number }};
+    newEvent: {
+        name: string, description: string, phone: number, date: string, begin_time: string,
+        end_time: string, coordinates: { lat: number, lng: number },  type: any
+    };
     mymap: any;
     lat: number;
     lng: number;
@@ -56,7 +59,12 @@ localeString = {
     this.lat = this.geoLoc.lat;
     this.lng = this.geoLoc.lng;
     this.date = new Date();
-    this.newEvent = {name: "", description: "", phone: null,date: "", begin_time: "", end_time: "", coordinates:{lat:null, lng:null}};
+    this.newEvent = {
+        name: "", description: "", phone: null, date: "", begin_time: "", end_time: "", coordinates: { lat: null, lng: null },
+        type: [ { name: "Deportivo", value: false }, { name: "Academico", value: false },
+                { name: "Cultural", value: false }, { name: "Ocio", value: false }, { name: "Informativo", value: false }
+              ]
+      };
   }
     
   showCalendar() {

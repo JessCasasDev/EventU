@@ -56,6 +56,20 @@
     </ion-row>
     <ion-row>
       <ion-col col-12>
+        Selecciona el tipo de evento
+      </ion-col>
+      <ion-col col-12>
+        <ion-list>
+          <ion-label>Tipo de Evento</ion-label>
+          <ion-item *ngFor="let type of newEvent.type">
+            <ion-label>{{type.name}}</ion-label>
+              <ion-checkbox [(ngModel)]="type.value"></ion-checkbox>           
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12>
         Selecciona la ubicación
       </ion-col>
       <ion-col col-12>

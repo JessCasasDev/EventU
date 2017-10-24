@@ -45,6 +45,14 @@
       </ion-col>
     </ion-row>
     <ion-row>
+      <ion-col col-4>Tipo de Evento</ion-col>
+      <ion-col col-8>
+          <ion-list *ngFor="let type of event.type">
+            <ion-item *ngIf="type.value">{{type.name}}</ion-item>
+          </ion-list>
+      </ion-col>
+    </ion-row>
+    <ion-row>
       <ion-col col-12>
         Ubicacion
       </ion-col>
