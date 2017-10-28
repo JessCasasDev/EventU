@@ -3,7 +3,8 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Crear Evento</ion-title>
+    <ion-title *ngIf="!updating">Crear Evento</ion-title>
+    <ion-title *ngIf="updating">Actualizar Evento</ion-title>
   </ion-navbar>
 </ion-header>
 
@@ -76,13 +77,16 @@
     </ion-row>
     <ion-row>
       <ion-col col-6>
-        <button ion-button full class="btnCancel">
+        <button ion-button full class="btnCancel" (click)="cancel()">
           Cancelar
         </button>
       </ion-col>
       <ion-col col-6>
-        <button ion-button full class="btnAccept" (click)="createEvent()">
+        <button *ngIf="!updating" ion-button full class="btnAccept" (click)="createEvent()">
           Crear
+        </button>
+        <button *ngIf="updating" ion-button full class="btnAccept" (click)="updateEvent()">
+          Actualizar
         </button>
       </ion-col>
     </ion-row>

@@ -32,6 +32,8 @@ export class CreateEventsPage {
     lat: number;
     lng: number;
     marker = [];
+    updating: boolean;
+
 
 localeString = {
     monday: true,
@@ -48,6 +50,7 @@ localeString = {
   ionViewDidLoad() {
       console.log('ionViewDidLoad CreateEventsPage');
       this.loadMap();
+      if(this.updating) this.setMarker(this.newEvent.coordinates.lat,this.newEvent.coordinates.lng);
   }
 
   ionViewCanLeave() {
@@ -59,12 +62,22 @@ localeString = {
     this.lat = this.geoLoc.lat;
     this.lng = this.geoLoc.lng;
     this.date = new Date();
-    this.newEvent = {
-        name: "", description: "", phone: null, date: "", begin_time: "", end_time: "", coordinates: { lat: null, lng: null },
-        type: [ { name: "Deportivo", value: false }, { name: "Academico", value: false },
-                { name: "Cultural", value: false }, { name: "Ocio", value: false }, { name: "Informativo", value: false }
-              ]
-      };
+    if(this.navParams.data.event != null){
+        this.newEvent = this.navParams.data.event;
+        this.updating = true;
+        console.log(this.newEvent);
+        this.lat = this.newEvent.coordinates.lat;
+        this.lng = this.newEvent.coordinates.lng;
+    }
+    else {
+        this.updating = false;
+        this.newEvent = {
+            name: "", description: "", phone: null, date: "", begin_time: "", end_time: "", coordinates: { lat: null, lng: null },
+            type: [ { name: "Deportivo", value: false }, { name: "Academico", value: false },
+                    { name: "Cultural", value: false }, { name: "Ocio", value: false }, { name: "Informativo", value: false }
+                ]
+        };
+    }
   }
     
   showCalendar() {
@@ -104,6 +117,36 @@ localeString = {
         alert.present();
     }
   }
+
+  updateEvent(){
+    if (this.validateFields()) {
+      this.newEvent.date = this.date.toISOString();
+      let alert = this.alertCtrl.create({
+          title: "Confirmar",
+          message: "¿Deseeas actualizar el evento " + this.newEvent.name + "?",
+          buttons: [
+              {
+                  text: "No",
+                  handler: () => {
+                      //do nothing
+                  }
+              }, {
+                  text: "Si",
+                  handler: () => {
+                      if (this.validateFields()) {
+                          console.log(this.newEvent);
+                          this.firePro.updateEvent(this.newEvent).then((data) =>{
+                              this.configPro.presentToast("Evento actualizado con exito");
+                              this.navCtrl.pop();
+                          }
+                          );
+                      }
+                  }
+              }]
+      });
+      alert.present();
+  }
+}
     
   validateFields() {
     if(!this.configPro.validateNoEmpty(this.newEvent.name)){
@@ -145,11 +188,11 @@ localeString = {
               this.removeMarker();
           }
           this.setMarker(e.latlng.lat, e.latlng.lng);
-          
       });
   }
 
   setMarker(lat: number, lng: number) {
+      console.log(lat,lng);
       this.marker.push(L.marker([lat, lng]).addTo(this.mymap));
       this.newEvent.coordinates.lat = lat;
       this.newEvent.coordinates.lng = lng;

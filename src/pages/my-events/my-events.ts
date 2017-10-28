@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams, Events } from 'ionic-angular';
 import { OwnEventsPage } from '../own-events/own-events';
 import { AssistedEventsPage } from '../assisted-events/assisted-events';
 import { EventsDetailPage } from '../events-detail/events-detail';
+import { CreateEventsPage } from '../create-events/create-events'
 
 @IonicPage()
 @Component({
@@ -22,15 +23,22 @@ export class MyEventsPage {
     this.eventsPro.subscribe("event:detail", event => {
       this.goToEventDetail(event);
     });
+    this.eventsPro.subscribe("event:edit", event => {
+      this.eventEdit(event);
+    });
   }
 
   ionViewWillUnload(){
     this.eventsPro.unsubscribe("event:detail");
+    this.eventsPro.unsubscribe("event:edit");
     console.log("unsubscribe");
   }
 
   goToEventDetail(event){
     this.navCtrl.push(EventsDetailPage, {'event':event});
   }
-
+  
+  eventEdit(event){
+    this.navCtrl.push(CreateEventsPage,{"event": event});    
+  }
 }

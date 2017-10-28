@@ -70,4 +70,7 @@ export class OwnEventsPage {
     });
   }
 
+  eventEdit(event){
+    this.eventsPro.publish('event:edit', event);
+  }
 }

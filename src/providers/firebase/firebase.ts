@@ -133,6 +133,17 @@ export class FirebaseProvider {
 
   }
 
+  updateEvent(event){
+    return new Promise((resolve,reject) => {
+      this.fireDB.list('/events/').update(event.id,event).then( data => {
+        console.log(data);
+        resolve();
+      }).catch( error => {
+        reject(error);
+      });
+    })
+  }
+
   getEventByName(event) {
       let events = [];
       return new Promise((resolve, reject) => {
