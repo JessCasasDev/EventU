@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-navbar>
+  <ion-navbar color="violetU">
     <ion-title>Detalle de Evento</ion-title>
   </ion-navbar>
 </ion-header>
@@ -47,9 +47,13 @@
     <ion-row>
       <ion-col col-4>Tipo de Evento</ion-col>
       <ion-col col-8>
-          <ion-list *ngFor="let type of event.type">
-            <ion-item *ngIf="type.value">{{type.name}}</ion-item>
-          </ion-list>
+        <ion-row>
+          <div *ngFor="let type of event.type">
+            <ion-chip color="greenU" *ngIf="type.value">
+              <ion-label>{{type.name}}</ion-label>
+            </ion-chip>
+          </div>
+        </ion-row>
       </ion-col>
     </ion-row>
     <ion-row>

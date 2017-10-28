@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
 
-import { LoadingController, ToastController } from 'ionic-angular';
+import { LoadingController, ToastController, AlertController } from 'ionic-angular';
 
 @Injectable()
 export class ConfigProvider {
@@ -11,7 +11,7 @@ export class ConfigProvider {
   loading: any;
 
   constructor(public http: Http, public toastCtrl: ToastController,
-              public loadingCtrl: LoadingController) {
+              public loadingCtrl: LoadingController, public alertCtrl: AlertController) {
     console.log('Hello ConfigProvider Provider');
   }
 
@@ -112,6 +112,15 @@ export class ConfigProvider {
 
   dismissLoading(){
     this.loading.dismiss();
+  }
+
+  presentAlert(message){
+    let alert = this.alertCtrl.create({
+      title: 'Hola',
+      subTitle: message,
+      buttons: ['Ok']
+    });
+    alert.present();
   }
     
 }

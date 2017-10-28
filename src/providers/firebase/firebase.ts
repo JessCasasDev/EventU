@@ -120,8 +120,17 @@ export class FirebaseProvider {
     });
   }
  
-  removeEvent(id) {
-    this.fireDB.list('/events/').remove(id);
+  deleteEvent(event) {
+    return new Promise((resolve,reject) => {
+      this.fireDB.list('/events/').remove(event.id).then( data => {
+        this.configPro.presentToast("Evento borrado con exito");
+        resolve(data);
+      }).catch( error => {
+        this.configPro.presentToast("No se ha podido borrar el evento");
+        reject(error);
+      });
+    })
+
   }
 
   getEventByName(event) {
