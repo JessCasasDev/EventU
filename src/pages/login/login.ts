@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Events} from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Events, AlertController} from 'ionic-angular';
 import { SignupPage } from "../signup/signup"
 import { NearEventsPage } from "../near-events/near-events"
 import { FirebaseProvider } from './../../providers/firebase/firebase';
@@ -17,7 +17,7 @@ export class LoginPage {
   user: any = [];
   constructor(public navCtrl: NavController, public navParams: NavParams,
               public eventsPro: Events, public firePro: FirebaseProvider,
-              public configPro: ConfigProvider) {
+              public configPro: ConfigProvider, public alertCtrl: AlertController) {
     this.initialize();
   }
 
@@ -42,9 +42,7 @@ export class LoginPage {
     ).catch( error => {
       console.log("No se ha podido obtener credenciales");
       this.configPro.dismissLoading();
-    }
-    );
-    
+    });
   }
 
   signup(){
@@ -57,7 +55,6 @@ export class LoginPage {
     else this.configPro.dismissLoading();
   }
 
-
   authUser(){
     this.firePro.login(this.email + this.configPro.domain, this.password).then(
       (data) => {
@@ -68,5 +65,42 @@ export class LoginPage {
     ).catch( error => {
       this.configPro.dismissLoading();
     });
+  }
+
+  passwordReset(){
+    let prompt = this.alertCtrl.create({
+      title: 'Recuperar Contraseña',
+      message: "Confirma tu correo para enviar la contraseña",
+      inputs: [
+        {
+          name: 'email',
+          placeholder: 'Correo'
+        },
+      ],
+      buttons: [
+        {
+          text: 'Enviar',
+          handler: data => {
+            if(!this.configPro.validateEmail(data.email)){
+              this.configPro.presentToast("Correo incorrecto");
+            }else{
+              this.firePro.resetPassword(data.email).then(data => {
+                this.configPro.presentToast("Se ha enviado un correo para recperar tu contraseña");
+              }).catch( error => {
+                this.configPro.presentToast("")
+              });
+            }
+            console.log(data);
+          }
+        },
+        {
+          text: 'Cancelar',
+          handler: data => {
+            console.log('Cancel');
+          }
+        }
+      ]
+    });
+    prompt.present();
   }
 }

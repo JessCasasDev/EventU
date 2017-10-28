@@ -81,6 +81,20 @@ export class FirebaseProvider {
     })
   }
 
+  resetPassword(email){
+    return new Promise( (resolve,reject) => {
+      this.fireAuth.auth.sendPasswordResetEmail(email).then( data => {
+        console.log(data);
+        resolve();
+      }).catch( error => {
+        console.log(error);
+        if(error.code == "auth/user-not-found"){
+          this.configPro.presentToast("El correo no existe en eventu");
+        }
+      })
+    })
+  }
+  
   //Events
   getEvents() {
       return new Promise((resolve, reject) => {
