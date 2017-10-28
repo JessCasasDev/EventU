@@ -32,7 +32,7 @@ export class NearEventsPage {
       months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
   };
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public configProvider: ConfigProvider,
+  constructor(public navCtrl: NavController, public navParams: NavParams, public configPro: ConfigProvider,
               public geoLoc: GeolocationProvider, public firePro: FirebaseProvider) {
       this.initialize();
   }
@@ -47,6 +47,7 @@ export class NearEventsPage {
     this.lat = this.geoLoc.lat;
     this.lng = this.geoLoc.lng;
     this.date = new Date();
+    this.configPro.dismissLoading();
   }
 
   showEvents() {
@@ -62,7 +63,7 @@ export class NearEventsPage {
               this.loadIcons();
           }
           else {
-              this.configProvider.presentToast("No se encontraron Eventos en la semana");
+              this.configPro.presentToast("No se encontraron Eventos en la semana");
           }
           
       }).catch(err => { console.log(err) })
@@ -132,7 +133,7 @@ export class NearEventsPage {
               this.loadIcons();
           }
           else {
-              this.configProvider.presentToast("No se encontraron Eventos en este día");
+              this.configPro.presentToast("No se encontraron Eventos en este día");
           }
 
       }).catch(err => { console.log(err) })

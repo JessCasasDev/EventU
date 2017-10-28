@@ -15,6 +15,19 @@ export class FirebaseProvider {
     console.log('Hello FirebaseProvider Provider');
   }
 
+  //Validate Session
+  validateSession(){
+    return new Promise( (resolve,reject) =>{
+      this.fireAuth.authState.subscribe( user =>{
+        console.log("sesion");
+        if(user){
+          this.user = user;
+          resolve(user);
+        }
+        else reject(user);
+      })
+    })
+  }
 
   //Authentication
   login(email, password){
@@ -28,10 +41,10 @@ export class FirebaseProvider {
     ).catch((error) => {
       console.log(error);
       if(error.code == "auth/network-request-failed"){
-        reject(error);
         this.configPro.presentToast("Verifica tu conexión a internet");
       }
       else this.configPro.presentToast("Correo y/o contraseña incorrectos");
+      reject(error);
       });
     });
   }
@@ -57,7 +70,10 @@ export class FirebaseProvider {
 
   logout(){
     return new Promise((resolve,reject) => {
-      this.fireAuth.auth.signOut().then( data => resolve(data))
+      this.fireAuth.auth.signOut().then( data => {
+        this.configPro.dismissLoading()
+        resolve(data)
+      })
       .catch( error => {
         console.log(error);
         this.configPro.presentToast("No se ha podido cerrar sesión")

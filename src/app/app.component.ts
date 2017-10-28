@@ -61,7 +61,6 @@ export class MyApp {
     this.configPro.presentLoading("Cerrando sesión");
     this.firePro.logout().then( data => {
       this.nav.setRoot(LoginPage);
-      this.configPro.dismissLoading();
     });
   }
   

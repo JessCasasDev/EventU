@@ -24,10 +24,27 @@ export class LoginPage {
   initialize(){
     this.email = "";
     this.password = "";
+    this.validateSession();
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad LoginPage');
+  }
+
+  validateSession(){
+    this.configPro.presentLoading("validando credenciales");
+    this.firePro.validateSession().then(
+      (data) => {
+        this.user = data;
+        this.eventsPro.publish('user:login',this.user.uid,this.user.email,"url imagen");
+        this.navCtrl.setRoot(NearEventsPage);
+      }
+    ).catch( error => {
+      console.log("No se ha podido obtener credenciales");
+      this.configPro.dismissLoading();
+    }
+    );
+    
   }
 
   signup(){
@@ -37,6 +54,7 @@ export class LoginPage {
   login(){
     this.configPro.presentLoading("Validando Credenciales");
     if(this.configPro.validateInputsLogin(this.email, this.password)) this.authUser();
+    else this.configPro.dismissLoading();
   }
 
 
@@ -46,7 +64,6 @@ export class LoginPage {
         this.user = data;
         this.eventsPro.publish('user:login',this.user.uid,this.user.email,"url imagen");
         this.navCtrl.setRoot(NearEventsPage);
-        this.configPro.dismissLoading();
       }
     ).catch( error => {
       this.configPro.dismissLoading();
