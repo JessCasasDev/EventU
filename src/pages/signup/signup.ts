@@ -11,8 +11,11 @@ import { ConfigProvider } from './../../providers/config/config';
 })
 export class SignupPage {
 
+  phone: number;
+  fullname: string;
   email:string;
   password: string;
+  password_repeat:string;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               public firePro: FirebaseProvider, public configPro: ConfigProvider) {
@@ -27,19 +30,39 @@ export class SignupPage {
   }
 
   signUp(){
-    if(this.configPro.validateInputs(this.email, this.password)){
-      this.configPro.presentLoading("Registrando en EventU");
-      this.firePro.singUp(this.email, this.password).then(
-        data => {
-          console.log(data);
-          this.login();
+    if(this.userProfile()){
+      if(this.configPro.validateInputs(this.email, this.password)){
+        this.configPro.presentLoading("Registrando en EventU");
+        this.firePro.singUp(this.email, this.password).then(
+          data => {
+            this.firePro.addUser(this.fullname,this.phone, this.email);
+            console.log(data);
+            this.login();
+            this.configPro.dismissLoading();
+          }
+        ).catch( data => {
           this.configPro.dismissLoading();
-        }
-      ).catch( data => {
-        this.configPro.dismissLoading();
-      });
+        });
+      }
     }
   }
 
+  repeatPassword(): boolean{
+    if(this.password == this.password_repeat) return true;
+    return false;
+  }
 
+  userProfile(): boolean{
+    if(this.repeatPassword()){
+      if(this.fullname != ""){
+        return true;
+      } else {
+        this.configPro.presentToast("Agrega tu nombre");
+        return false;
+      }
+    } else {
+      this.configPro.presentToast("Las contraseñas no coinciden");
+      return false;
+    }
+  }
 }

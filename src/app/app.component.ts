@@ -6,6 +6,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { NearEventsPage } from "../pages/near-events/near-events"
 import { CreateEventsPage } from "../pages/create-events/create-events"
 import { MyEventsPage } from '../pages/my-events/my-events';
+import { UpdateProfilePage } from '../pages/update-profile/update-profile';
 import { LoginPage } from '../pages/login/login';
 
 import { FirebaseProvider } from '../providers/firebase/firebase'
@@ -30,9 +31,14 @@ export class MyApp {
       {title: "Eventos Cercanos", icon:"home",component: NearEventsPage},
       {title: "Crear Evento", icon:"add",component: CreateEventsPage},
       {title: "Mis Eventos", icon: "person", component: MyEventsPage },
+      {title: "Mi Perfil", icon: "settings", component: UpdateProfilePage},
+    
     ];
     eventsPro.subscribe('user:login', (id,name,avatar) => {
       this.setUser(id,name,avatar);
+    });
+    eventsPro.subscribe('user:updateProfile', (name) => {
+      this.updateUser(name);
     });
   }
 
@@ -53,6 +59,11 @@ export class MyApp {
 
   setUser(id,name,avatar){
     this.user.id = id;
+    this.user.name = name;
+    //TODO Uncomment if(avatar != "") this.user.avatar = avatar;
+  }
+  
+  updateUser(name){
     this.user.name = name;
     //TODO Uncomment if(avatar != "") this.user.avatar = avatar;
   }

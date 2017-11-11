@@ -4,17 +4,24 @@
     <ion-row>
       <ion-col col-12>
         <ion-item>
+          <ion-input placeholder="Nombre y Apellidos" [(ngModel)]="fullname" required clearInput type="text"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12>
+        <ion-item>
+          <ion-input placeholder="Teléfono(Opcional)" [(ngModel)]="phone" clearInput type="tel"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12>
+        <ion-item>
           <ion-input placeholder="Correo" [(ngModel)]="email" clearInput type="email"></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
-    <!--<ion-row>
-      <ion-col col-12>
-        <ion-item>
-          <ion-input placeholder="Nombre" required clearInput type="text"></ion-input>
-        </ion-item>
-      </ion-col>
-    </ion-row>-->
     <ion-row>
       <ion-col col-12>
         <ion-item>
@@ -22,6 +29,13 @@
         </ion-item>
       </ion-col>
     </ion-row>
+    <ion-row>
+        <ion-col col-12>
+          <ion-item>
+            <ion-input placeholder="Repetir contraseña" [(ngModel)]="password_repeat" clearInput type="password"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
     <ion-row>
       <ion-col col-12>
         <button ion-button full class="btnAccept" (click)="signUp()">Registrarse</button>

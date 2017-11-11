@@ -9,7 +9,7 @@ import { ConfigProvider } from '../config/config'
 export class FirebaseProvider {
 
   user: any = [];
-
+  emailshort: string;
   constructor(public http: Http, public fireDB: AngularFireDatabase,
               public fireAuth: AngularFireAuth, public configPro: ConfigProvider) {
     console.log('Hello FirebaseProvider Provider');
@@ -17,11 +17,12 @@ export class FirebaseProvider {
 
   //Validate Session
   validateSession(){
+
     return new Promise( (resolve,reject) =>{
       this.fireAuth.authState.subscribe( user =>{
-        console.log("sesion");
         if(user){
           this.user = user;
+          this.getUserProfile(this.user.email);
           resolve(user);
         }
         else reject(user);
@@ -35,7 +36,10 @@ export class FirebaseProvider {
       this.fireAuth.auth.signInWithEmailAndPassword(email,password).then(
         (data) => {
           this.user = data;
-          if(this.user.emailVerified) resolve(data);
+          if(this.user.emailVerified){
+            this.getUserProfile(email);
+            resolve(data);
+          }
           else this.configPro.presentToast("Debes Validar tu correo primero");
         }
     ).catch((error) => {
@@ -97,13 +101,13 @@ export class FirebaseProvider {
   
   //Events
   getEvents() {
-      return new Promise((resolve, reject) => {
-          this.fireDB.list('/events/').valueChanges().subscribe( data =>{
-            console.log(data);
-            if(data) resolve(data);
-            else console.log(data);
-          })
-      });
+    return new Promise((resolve, reject) => {
+      this.fireDB.list('/events/').valueChanges().subscribe( data =>{
+        console.log(data);
+        if(data) resolve(data);
+        else console.log(data);
+      })
+    });
   }
 
   getEventsById() {
@@ -159,51 +163,106 @@ export class FirebaseProvider {
   }
 
   getEventByName(event) {
-      let events = [];
-      return new Promise((resolve, reject) => {
-          var ref = this.fireDB.database.ref('events').orderByKey();
-          ref.equalTo(event).once("value", data => {
-              data.forEach(a => {
-                let event = a.val();
-                event.id = a.key;
-                events.push(event);
-                return false;
-              });
-          }).then(data => resolve(events))
-      });
+    let events = [];
+    return new Promise((resolve, reject) => {
+      var ref = this.fireDB.database.ref('events').orderByKey();
+      ref.equalTo(event).once("value", data => {
+        data.forEach(a => {
+          let event = a.val();
+          event.id = a.key;
+          events.push(event);
+          return false;
+        });
+      }).then(data => resolve(events))
+    });
   }
 
   getEventsByDates(startDate: Date, endDate: Date) {
-      console.log(startDate.toISOString(), endDate.toISOString());
-      return new Promise((resolve, reject) => {
-          let events = [];
-          var ref = this.fireDB.database.ref('events').orderByChild("date");
-          ref.startAt(startDate.toISOString()).endAt(endDate.toISOString()).once("value", data => {
-              console.log(data);
-              data.forEach(a => {
-                let event = a.val();
-                event.id = a.key;
-                events.push(event);
-                return false;
-              });
-          }).then(data => resolve(events))
-      });
+    console.log(startDate.toISOString(), endDate.toISOString());
+    return new Promise((resolve, reject) => {
+      let events = [];
+      var ref = this.fireDB.database.ref('events').orderByChild("date");
+      ref.startAt(startDate.toISOString()).endAt(endDate.toISOString()).once("value", data => {
+        console.log(data);
+        data.forEach(a => {
+          let event = a.val();
+          event.id = a.key;
+          events.push(event);
+          return false;
+        });
+      }).then(data => resolve(events))
+    });
   }
 
   getEventsByDate(date: Date) {
-      return new Promise((resolve, reject) => {
-          let events = [];
-          var ref = this.fireDB.database.ref('events').orderByChild("date");
-          ref.startAt(date.toISOString()).once("value", data => {
-              console.log(data);
-              data.forEach(a => {
-                  let event = a.val();
-                  event.id = a.key;
-                  events.push(event);
-                  return false;
-              });
-          }).then(data => resolve(events))
+    return new Promise((resolve, reject) => {
+      let events = [];
+      var ref = this.fireDB.database.ref('events').orderByChild("date");
+      ref.startAt(date.toISOString()).once("value", data => {
+        console.log(data);
+        data.forEach(a => {
+          let event = a.val();
+          event.id = a.key;
+          events.push(event);
+          return false;
+        });
+      }).then(data => resolve(events))
+    });
+  }
+
+  //Users
+  addUser(fullname:string, phone:number, email:string){
+    let user = {"username":fullname,"phone":phone};
+    return new Promise( (resolve, reject) => {
+      this.fireDB.list('/users/').set(this.emailshort,user).then( data =>{
+        console.log(data);
+        resolve();
+      }).catch( error => {
+        console.log(error);
+        reject(error);
       });
+    });
+  }
+
+  updateUser(user:any){
+    this.configPro.presentLoading("Actualizando Datos...");
+    return new Promise( (resolve, reject) => {
+      this.fireDB.list('/users/').set(this.emailshort,user).then( data =>{
+        console.log(data);
+        this.configPro.dismissLoading();
+        this.configPro.presentToast("Datos Actualizados Con Exito");
+        resolve();
+      }).catch( error => {
+        console.log(error);
+        this.configPro.dismissLoading();
+        this.configPro.presentToast("Error al actualizar datos");
+        reject(error);
+      });
+    });
+  }
+
+  uploadImage(){
+    //TODO Update Image
+  }
+
+  getUserProfile(email:string){
+    this.cutEmail(email);
+    return new Promise((resolve, reject) => {
+      this.fireDB.list('/users/'+this.emailshort).valueChanges().subscribe( data =>{
+        this.user.name = data[1];
+        this.user.phone = data[0];
+        if(data) resolve(data);
+        else console.log(data);
+      })
+    });
+  }
+
+  getUser(){
+    return this.user;
+  }
+
+  cutEmail(email: string){
+    this.emailshort = email.split("@")[0];
   }
 
 }

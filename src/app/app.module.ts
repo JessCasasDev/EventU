@@ -12,6 +12,7 @@ import { MyEventsPage } from '../pages/my-events/my-events';
 import { NearEventsPage} from '../pages/near-events/near-events';
 import { OwnEventsPage } from '../pages/own-events/own-events';
 import { SignupPage } from '../pages/signup/signup';
+import { UpdateProfilePage } from '../pages/update-profile/update-profile';
 
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
@@ -47,6 +48,7 @@ const firebaseConfig = {
     OwnEventsPage,
     AssistedEventsPage,
     EventsDetailPage,
+    UpdateProfilePage,
 
   ],
   imports: [
@@ -70,6 +72,7 @@ const firebaseConfig = {
     OwnEventsPage,
     AssistedEventsPage,    
     EventsDetailPage,
+    UpdateProfilePage,
     
   ],
   providers: [

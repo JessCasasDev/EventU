@@ -35,9 +35,17 @@ export class LoginPage {
     this.configPro.presentLoading("validando credenciales");
     this.firePro.validateSession().then(
       (data) => {
+        console.log(data);
         this.user = data;
-        this.eventsPro.publish('user:login',this.user.uid,this.user.email,"url imagen");
-        this.navCtrl.setRoot(NearEventsPage);
+        if(this.user.emailVerified){
+          this.firePro.getUserProfile(this.user.email).then( user => {
+            this.eventsPro.publish('user:login',this.user.uid, user[1],"url imagen");
+            this.navCtrl.setRoot(NearEventsPage);
+          });
+        } else {
+          this.configPro.presentToast("Debes Validar tu correo primero");
+          this.configPro.dismissLoading();
+        }
       }
     ).catch( error => {
       console.log("No se ha podido obtener credenciales");
@@ -58,6 +66,7 @@ export class LoginPage {
   authUser(){
     this.firePro.login(this.email + this.configPro.domain, this.password).then(
       (data) => {
+        console.log(data);
         this.user = data;
         this.eventsPro.publish('user:login',this.user.uid,this.user.email,"url imagen");
         this.navCtrl.setRoot(NearEventsPage);
