@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-navbar color="violetU">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Mi Perfil</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-12>
+        <img src="{{user.avatar}}" class="img-profile">
+      </ion-col>
+      <ion-col col-12 class="text-profile" align-self-center>
+        <p>{{user.email}}</p>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-10 class="text-profile" align-self-center>
+        <ion-input placeholder="Nombre" [(ngModel)]="user.name" readonly="{{!changeName}}"></ion-input>
+      </ion-col>
+      <ion-col col-2 align-self-center>
+        <button ion-button full [ngClass]="{'btnAccept': !changeName, 'btnCancel': changeName}" (click)="updateName()">
+          <ion-icon name="md-create"></ion-icon>
+        </button>          
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-10 class="text-profile" align-self-center>
+        <ion-input placeholder="Teléfono(Opcional)" [(ngModel)]="user.phone" readonly="{{!changePhone}}"></ion-input>
+      </ion-col>
+      <ion-col col-2 align-self-center>
+        <button ion-button full [ngClass]="{'btnAccept': !changePhone, 'btnCancel': changePhone}" (click)="updatePhone()">
+          <ion-icon name="md-create"></ion-icon>
+        </button>          
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12>
+        <button ion-button full class="btnAccept" [disabled]="!change" (click)="updateProfile()">Actualizar</button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
