@@ -110,6 +110,21 @@ export class FirebaseProvider {
     });
   }
 
+  getEventsByType( type : string) {
+      return new Promise((resolve, reject) => {
+          let events = [];
+          var ref = this.fireDB.database.ref('events').orderByChild("type");
+          ref.equalTo(type).once("value", data => {
+              data.forEach(a => {
+                  let event = a.val();
+                  event.id = a.key;
+                  events.push(event);
+                  return false;
+              });
+          }).then(data => resolve(events))
+      })
+  }
+
   getEventsById() {
     return new Promise((resolve,reject) =>{
       let events = [];
@@ -140,7 +155,7 @@ export class FirebaseProvider {
  
   deleteEvent(event) {
     return new Promise((resolve,reject) => {
-      this.fireDB.list('/events/').remove(event.id).then( data => {
+      this.fireDB.list('/events/').remove(event.id).then( (data : any) => {
         this.configPro.presentToast("Evento borrado con exito");
         resolve(data);
       }).catch( error => {

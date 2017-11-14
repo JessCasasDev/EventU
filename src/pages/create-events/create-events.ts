@@ -68,6 +68,7 @@ localeString = {
         console.log(this.newEvent);
         this.lat = this.newEvent.coordinates.lat;
         this.lng = this.newEvent.coordinates.lng;
+        this.date = new Date(this.newEvent.date);
     }
     else {
         this.updating = false;
