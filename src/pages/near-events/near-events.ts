@@ -114,10 +114,16 @@ export class NearEventsPage {
                   "<p class='event-description'> " +
                   (event.description.lenght > 6 ? event.description.substring(6) + "..." : event.description)
                   + "</p>" +
-                  "<ion-row justify-content-center><button class='button button-md button-default button-default-md btnAccept' onClick=\"" +
+                  "<ion-row justify-content-center><ion-col col-6>"+
+                  "<button class='button button-md button-default button-default-md btnAccept' onClick=\"" +
                   "document.getElementById('eventId1').value='" + event.id + "'; " +
                   "document.getElementById('eventId1').click();" +
-                  "\">Ver Detalle</button></ion-row>");
+                  "\">Ver Detalle</button></ion-col>" +
+                  "<ion-col col-6><button class='button button-md button-default button-default-md btnPlus' onClick=\"" +
+                  "document.getElementById('eventId2').value='" + event.id + "'; " +
+                  "document.getElementById('eventId2').click();" +
+                  "\">Asistir</button></ion-col>"+
+                  "</ion-row>");
 
           });
           for (let i of event.type) {
@@ -214,5 +220,20 @@ export class NearEventsPage {
 
   removeIcons() {
       this.mymap.removeLayer(this.markers);
+  }
+
+  attend_event(event) {
+      this.firePro.attend_event(event).then(res => {
+          console.log(res);
+          if (res) {
+              this.configPro.presentToast("Irás al evento " + this.events.filter(item => item.id === event)[0].name);
+          }
+          else {
+              console.log(res)
+          }
+      }).catch(err => {
+          console.log(err)
+          this.configPro.presentToast("El evento " + this.events.filter(item => item.id === event)[0].name + " ya esta en tu lista");
+      });
   }
 }

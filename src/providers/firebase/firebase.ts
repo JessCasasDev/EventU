@@ -124,7 +124,7 @@ export class FirebaseProvider {
           }).then(data => resolve(events))
       })
   }
-
+    //get events by user
   getEventsById() {
     return new Promise((resolve,reject) =>{
       let events = [];
@@ -223,6 +223,33 @@ export class FirebaseProvider {
         });
       }).then(data => resolve(events))
     });
+  }
+
+  attend_event(event) {
+      console.log(this.user, event);
+      let events = [];
+      return new Promise((resolve, reject) => {
+          var ref = this.fireDB.database.ref('events_users').orderByChild("user");
+          ref.equalTo(this.user.uid).once("value", data => {
+              data.forEach(a => {
+                  let event = a.val();
+                  event.id = a.key;
+                  events.push(event);
+                  return false;
+              });
+          }).then(data => {
+              if (events.filter(item => item.event === event)[0] !== undefined) {
+                  reject("user has already attend event");
+              } else {
+                  //if it doesn't exist, create a ref'
+                  this.fireDB.list('/events_users/').push({ "event": event, "user": this.user.uid }).then(
+                      (data) => {
+                          resolve(data);
+                      }
+                  )
+              }
+          })
+      });
   }
 
   //Users

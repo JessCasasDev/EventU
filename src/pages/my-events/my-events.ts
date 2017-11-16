@@ -3,7 +3,8 @@ import { IonicPage, NavController, NavParams, Events } from 'ionic-angular';
 import { OwnEventsPage } from '../own-events/own-events';
 import { AssistedEventsPage } from '../assisted-events/assisted-events';
 import { EventsDetailPage } from '../events-detail/events-detail';
-import { CreateEventsPage } from '../create-events/create-events'
+import { CreateEventsPage } from '../create-events/create-events';
+import { InscribedEventsPage } from '../inscribed-events/inscribed-events';
 
 @IonicPage()
 @Component({
@@ -12,8 +13,9 @@ import { CreateEventsPage } from '../create-events/create-events'
 })
 export class MyEventsPage {
 
-  ownRoot = OwnEventsPage;
-  assistedRoot = AssistedEventsPage;
+    ownRoot = OwnEventsPage;
+    inscribedRoot = InscribedEventsPage;
+    assistedRoot = AssistedEventsPage;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public eventsPro:Events) {
   }
