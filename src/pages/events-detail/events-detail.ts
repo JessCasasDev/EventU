@@ -27,6 +27,10 @@ export class EventsDetailPage {
     this.loadMap();
   }
 
+  ionViewCanLeave() {
+      document.getElementById("mapDetail").outerHTML = "";
+  }
+
   loadMap() {
     this.mymap = Leaflet.map('mapDetail').setView([this.event.coordinates.lat, this.event.coordinates.lng], 16);
     Leaflet.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
