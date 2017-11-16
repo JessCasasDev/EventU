@@ -10,6 +10,9 @@ export class FirebaseProvider {
 
   user: any = [];
   emailshort: string;
+  inscribed_events = [];
+  assisted_events = [];
+
   constructor(public http: Http, public fireDB: AngularFireDatabase,
               public fireAuth: AngularFireAuth, public configPro: ConfigProvider) {
     console.log('Hello FirebaseProvider Provider');
@@ -250,6 +253,94 @@ export class FirebaseProvider {
               }
           })
       });
+  }
+
+  getInscribedEventsById() {
+      return new Promise((resolve, reject) => {
+          let events = [];
+          this.inscribed_events = [];
+          var ref = this.fireDB.database.ref('events_users').orderByChild("user");
+          ref.equalTo(this.user.uid).once("value", data => {
+              data.forEach(a => {
+                  let event = a.val();
+                  event.id = a.key;
+                  events.push(event);
+                  return false;
+              });
+          }).then(data => {
+              let current_date = new Date();
+              var ref = this.fireDB.database.ref('events').orderByKey();
+              events.forEach(item => {
+                  console.log(item.event);
+                  ref.equalTo(item.event).once("value", data => {
+                      data.forEach(a => {
+                          let event = a.val();
+                          event.id = a.key;
+                          let event_date = new Date(event.date);
+                          console.log(event_date, current_date);
+                          if (event_date.getTime() > current_date.getTime() &&
+                              this.inscribed_events.filter(item => item.id === event.id).length === 0)
+                              this.inscribed_events.push(event);
+                          return false;
+                      });
+                  }).then(data => {
+                      console.log(this.inscribed_events);
+                      resolve(this.inscribed_events);
+                  })
+              })
+          })
+      });      
+  }
+
+  getAsistedEventsById() {
+      return new Promise((resolve, reject) => {
+          let events = [];
+          this.assisted_events = [];
+
+          var ref = this.fireDB.database.ref('events_users').orderByChild("user");
+          ref.equalTo(this.user.uid).once("value", data => {
+              data.forEach(a => {
+                  let event = a.val();
+                  event.id = a.key;
+                  events.push(event);
+                  return false;
+              });
+          }).then(data => {
+              let current_date = new Date();
+              var ref = this.fireDB.database.ref('events').orderByKey();
+              events.forEach(item => {
+                  console.log(item.event);
+                  ref.equalTo(item.event).once("value", data => {
+                      data.forEach(a => {
+                          let event = a.val();
+                          event.id = a.key;
+                          let event_date = new Date(event.date);
+                          console.log(event_date, current_date);
+                          if (event_date.getTime() <= current_date.getTime() &&
+                              this.assisted_events.filter(item => item.id === event.id).length === 0)
+                              this.assisted_events.push(event);
+                          console.log("events filtered", this.assisted_events);
+                          return false;
+                      });
+                  }).then(data => {
+                      console.log(this.assisted_events);
+                      resolve(this.assisted_events);
+                  })
+              });
+              
+          })
+      });  
+  }
+
+  isAssisted(event) {
+      console.log(event, this.assisted_events, this.inscribed_events);
+      return new Promise((resolve, reject) => {
+          if (this.assisted_events.filter(item => item.id === event.id).length > 0 ||
+              this.inscribed_events.filter(item => item.id === event.id).length > 0)
+              resolve(true);
+          else
+              resolve(false);
+      })
   }
 
   //Users

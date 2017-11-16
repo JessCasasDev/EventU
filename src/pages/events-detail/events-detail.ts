@@ -13,11 +13,13 @@ export class EventsDetailPage {
 
   event: any;
   mymap: any;
+  is_assisted = false;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public configPro: ConfigProvider,
       public firePro: FirebaseProvider) {
     this.event = this.navParams.get('event');
     console.log(event);
+    this.isAssisted();
   }
 
   ionViewDidLoad() {
@@ -47,5 +49,12 @@ export class EventsDetailPage {
           this.configPro.presentToast("El evento " + this.event.name + " ya esta en tu lista");
       });
   }
+
+  isAssisted() {
+      this.firePro.isAssisted(this.event).then( (result : any) => {
+          this.is_assisted = result;
+      }).catch(err => console.log(err));
+  }
+
 
 }

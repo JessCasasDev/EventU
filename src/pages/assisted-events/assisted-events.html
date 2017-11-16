@@ -1,3 +1,19 @@
 <ion-content padding>
-  asistidos
-</ion-content>
+  <ion-list *ngIf="!loadingEvents && events.length > 0">
+
+    <ion-item-sliding *ngFor="let event of events" #item>
+      <ion-item>
+        {{event.name}}
+      </ion-item>
+      <ion-item-options side="right">
+        <button ion-button color="blueU" (click)="eventDetail(event)">Detalle</button>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+  <ion-list *ngIf="!loadingEvents && events.length == 0">
+    nada que mostrar
+  </ion-list>
+  <ion-list *ngIf="loadingEvents">
+    <ion-spinner item-start name="crescent"></ion-spinner>
+  </ion-list>
+

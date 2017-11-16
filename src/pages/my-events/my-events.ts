@@ -31,8 +31,8 @@ export class MyEventsPage {
   }
 
   ionViewWillUnload(){
-    this.eventsPro.unsubscribe("event:detail");
-    this.eventsPro.unsubscribe("event:edit");
+   // this.eventsPro.unsubscribe("event:detail");
+   // this.eventsPro.unsubscribe("event:edit");
     console.log("unsubscribe");
   }
 

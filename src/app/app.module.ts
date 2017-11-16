@@ -11,6 +11,7 @@ import { LoginPage } from '../pages/login/login';
 import { MyEventsPage } from '../pages/my-events/my-events';
 import { NearEventsPage} from '../pages/near-events/near-events';
 import { OwnEventsPage } from '../pages/own-events/own-events';
+import { InscribedEventsPage } from '../pages/inscribed-events/inscribed-events';
 import { SignupPage } from '../pages/signup/signup';
 import { UpdateProfilePage } from '../pages/update-profile/update-profile';
 
@@ -49,7 +50,7 @@ const firebaseConfig = {
     AssistedEventsPage,
     EventsDetailPage,
     UpdateProfilePage,
-
+      InscribedEventsPage,
   ],
   imports: [
     BrowserModule,
@@ -73,7 +74,7 @@ const firebaseConfig = {
     AssistedEventsPage,    
     EventsDetailPage,
     UpdateProfilePage,
-    
+      InscribedEventsPage
   ],
   providers: [
     StatusBar,

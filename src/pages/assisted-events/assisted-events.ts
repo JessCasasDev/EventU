@@ -1,12 +1,7 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-
-/**
- * Generated class for the AssistedEventsPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
+import { IonicPage, NavController, NavParams, Events } from 'ionic-angular';
+import { FirebaseProvider } from '../../providers/firebase/firebase';
+import { ConfigProvider } from '../../providers/config/config';
 
 @IonicPage()
 @Component({
@@ -14,12 +9,34 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
   templateUrl: 'assisted-events.html',
 })
 export class AssistedEventsPage {
+    events: any;
+    loadingEvents: boolean;
+    constructor(public navCtrl: NavController, public navParams: NavParams, public firePro: FirebaseProvider, public eventsPro: Events, ) {
+        this.initialize();
+    }
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
-  }
+    ionViewDidLoad() {
+        console.log('ionViewDidLoad OwnEventsPage');
+        this.getAsistedEvents();
+    }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad AssistedEventsPage');
-  }
+    getAsistedEvents() {
+        this.firePro.getAsistedEventsById().then(data => {
+            this.events = data;
+            this.loadingEvents = false;
+        }).catch(error => {
+            this.loadingEvents = false;
+        });
+    }
 
+    initialize() {
+        this.events = [];
+        this.loadingEvents = true;
+    }
+
+    eventDetail(event) {
+        console.log(event);
+        this.eventsPro.publish("event:detail", event);
+    }
+  
 }
