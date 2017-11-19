@@ -229,29 +229,27 @@ export class FirebaseProvider {
   }
 
   attend_event(event) {
-      console.log(this.user, event);
       let events = [];
       return new Promise((resolve, reject) => {
-          var ref = this.fireDB.database.ref('events_users').orderByChild("user");
-          ref.equalTo(this.user.uid).once("value", data => {
-              data.forEach(a => {
-                  let event = a.val();
-                  event.id = a.key;
-                  events.push(event);
-                  return false;
-              });
-          }).then(data => {
-              if (events.filter(item => item.event === event)[0] !== undefined) {
-                  reject("user has already attend event");
-              } else {
-                  //if it doesn't exist, create a ref'
-                  this.fireDB.list('/events_users/').push({ "event": event, "user": this.user.uid }).then(
-                      (data) => {
-                          resolve(data);
-                      }
-                  )
-              }
-          })
+        var ref = this.fireDB.database.ref('events_users');
+        ref.child(this.emailshort).once("value",data => {
+          data.forEach(a => {
+            events.push(a.key);
+            return false;
+          });
+        }).then(data => {
+          console.log(events);
+            if (events.filter(item => item === event)[0] !== undefined) {
+                reject("user has already attend event");
+            } else {
+                //if it doesn't exist, create a ref'
+                this.fireDB.list('/events_users/'+this.emailshort).set(event, "i").then(
+                  (data) => {
+                      resolve();
+                  }
+                )
+            }
+        })
       });
   }
 
@@ -259,42 +257,37 @@ export class FirebaseProvider {
       return new Promise((resolve, reject) => {
           let events = [];
           this.inscribed_events = [];
-          var ref = this.fireDB.database.ref('events_users').orderByChild("user");
-          ref.equalTo(this.user.uid).once("value", data => {
-              data.forEach(a => {
-                  let event = a.val();
-                  event.id = a.key;
-                  events.push(event);
-                  return false;
-              });
+          var ref = this.fireDB.database.ref('events_users');
+          ref.child(this.emailshort).once("value",data => {
+            data.forEach(a => {
+              events.push(a.key);
+              return false;
+            });
           }).then(data => {
-            console.log(events.length);
-              if(events.length > 0){
-                let current_date = new Date();
-                var ref = this.fireDB.database.ref('events').orderByKey();
-                events.forEach(item => {
-                    console.log(item.event);
-                    ref.equalTo(item.event).once("value", data => {
-                        data.forEach(a => {
-                            let event = a.val();
-                            event.id = a.key;
-                            let event_date = new Date(event.date);
-                            console.log(event_date, current_date);
-                            if (event_date.getTime() > current_date.getTime() &&
-                                this.inscribed_events.filter(item => item.id === event.id).length === 0)
-                                this.inscribed_events.push(event);
-                            return false;
-                        });
-                    }).then(data => {
-                        console.log(this.inscribed_events);
-                        resolve(this.inscribed_events);
-                    })
-                })
-              }
-              else{
-                reject();
-              }
-          })
+            if(events.length > 0){
+              console.log(events);
+              let current_date = new Date();
+              var ref = this.fireDB.database.ref('events').orderByKey();
+              events.forEach(item => {
+                  console.log(item);
+                  ref.equalTo(item).once("value", data => {
+                      data.forEach(a => {
+                          let event = a.val();
+                          event.id = a.key;
+                          let event_date = new Date(event.date);
+                          console.log(event_date, current_date);
+                          if (event_date.getTime() > current_date.getTime() &&
+                              this.inscribed_events.filter(item => item.id === event.id).length === 0)
+                              this.inscribed_events.push(event);
+                          return false;
+                      });
+                  }).then(data => {
+                      console.log(this.inscribed_events);
+                      resolve(this.inscribed_events);
+                  })
+              });
+            } else reject();
+          });
       });      
   }
 

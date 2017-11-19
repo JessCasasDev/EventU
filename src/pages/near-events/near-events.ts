@@ -224,13 +224,7 @@ export class NearEventsPage {
 
   attend_event(event) {
       this.firePro.attend_event(event).then(res => {
-          console.log(res);
-          if (res) {
-              this.configPro.presentToast("Irás al evento " + this.events.filter(item => item.id === event)[0].name);
-          }
-          else {
-              console.log(res)
-          }
+          this.configPro.presentToast("Irás al evento " + this.events.filter(item => item.id === event)[0].name);
       }).catch(err => {
           console.log(err)
           this.configPro.presentToast("El evento " + this.events.filter(item => item.id === event)[0].name + " ya esta en tu lista");
