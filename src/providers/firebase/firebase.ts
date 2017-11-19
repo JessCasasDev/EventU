@@ -295,22 +295,19 @@ export class FirebaseProvider {
       return new Promise((resolve, reject) => {
           let events = [];
           this.assisted_events = [];
-
-          var ref = this.fireDB.database.ref('events_users').orderByChild("user");
-          ref.equalTo(this.user.uid).once("value", data => {
-              data.forEach(a => {
-                  let event = a.val();
-                  event.id = a.key;
-                  events.push(event);
-                  return false;
-              });
+          var ref = this.fireDB.database.ref('events_users');
+          ref.child(this.emailshort).once("value",data => {
+            data.forEach(a => {
+              events.push(a.key);
+              return false;
+            });
           }).then(data => {
             if(events.length > 0){
               let current_date = new Date();
               var ref = this.fireDB.database.ref('events').orderByKey();
               events.forEach(item => {
-                  console.log(item.event);
-                  ref.equalTo(item.event).once("value", data => {
+                  console.log(item);
+                  ref.equalTo(item).once("value", data => {
                       data.forEach(a => {
                           let event = a.val();
                           event.id = a.key;
