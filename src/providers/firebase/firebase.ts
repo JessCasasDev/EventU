@@ -268,26 +268,32 @@ export class FirebaseProvider {
                   return false;
               });
           }).then(data => {
-              let current_date = new Date();
-              var ref = this.fireDB.database.ref('events').orderByKey();
-              events.forEach(item => {
-                  console.log(item.event);
-                  ref.equalTo(item.event).once("value", data => {
-                      data.forEach(a => {
-                          let event = a.val();
-                          event.id = a.key;
-                          let event_date = new Date(event.date);
-                          console.log(event_date, current_date);
-                          if (event_date.getTime() > current_date.getTime() &&
-                              this.inscribed_events.filter(item => item.id === event.id).length === 0)
-                              this.inscribed_events.push(event);
-                          return false;
-                      });
-                  }).then(data => {
-                      console.log(this.inscribed_events);
-                      resolve(this.inscribed_events);
-                  })
-              })
+            console.log(events.length);
+              if(events.length > 0){
+                let current_date = new Date();
+                var ref = this.fireDB.database.ref('events').orderByKey();
+                events.forEach(item => {
+                    console.log(item.event);
+                    ref.equalTo(item.event).once("value", data => {
+                        data.forEach(a => {
+                            let event = a.val();
+                            event.id = a.key;
+                            let event_date = new Date(event.date);
+                            console.log(event_date, current_date);
+                            if (event_date.getTime() > current_date.getTime() &&
+                                this.inscribed_events.filter(item => item.id === event.id).length === 0)
+                                this.inscribed_events.push(event);
+                            return false;
+                        });
+                    }).then(data => {
+                        console.log(this.inscribed_events);
+                        resolve(this.inscribed_events);
+                    })
+                })
+              }
+              else{
+                reject();
+              }
           })
       });      
   }
@@ -306,6 +312,7 @@ export class FirebaseProvider {
                   return false;
               });
           }).then(data => {
+            if(events.length > 0){
               let current_date = new Date();
               var ref = this.fireDB.database.ref('events').orderByKey();
               events.forEach(item => {
@@ -327,7 +334,10 @@ export class FirebaseProvider {
                       resolve(this.assisted_events);
                   })
               });
-              
+            }
+            else {
+              reject();
+            } 
           })
       });  
   }

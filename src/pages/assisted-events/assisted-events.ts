@@ -16,7 +16,7 @@ export class AssistedEventsPage {
     }
 
     ionViewDidLoad() {
-        console.log('ionViewDidLoad OwnEventsPage');
+        console.log('ionViewDidLoad Asssted-events');
         this.getAsistedEvents();
     }
 

@@ -17,7 +17,7 @@ export class InscribedEventsPage {
   }
 
   ionViewDidLoad() {
-      console.log('ionViewDidLoad OwnEventsPage');
+      console.log('ionViewDidLoad InscribedEventsPage');
       this.getInscribedEvents();
   }
 
