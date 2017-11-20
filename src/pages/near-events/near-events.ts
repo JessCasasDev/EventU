@@ -34,7 +34,8 @@ export class NearEventsPage {
   cultural_layers: any;
   informative_layers: any;
   all_markers_layer: any;
-
+  my_events: any;
+  controlLayers: any;
 
   localeString = {
       monday: true,
@@ -70,7 +71,7 @@ export class NearEventsPage {
           if (result.length !== 0) {
               this.events = result;
               //Inside the method in order to get the list full before the loadIcons call
-              this.loadIcons();
+              this.getMyEvents();
           }
           else {
               this.configPro.presentToast("No se encontraron Eventos en la semana");
@@ -85,14 +86,23 @@ export class NearEventsPage {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.mymap);
   }
+  getMyEvents(){
+    this.firePro.getAllEvents().then( data => {
+        this.my_events = data;
+        this.loadIcons();
+    }).catch( error => {
+        this.loadIcons();
+    });
+  }
 
   loadIcons() {
-      this.markers = L.markerClusterGroup();
+        console.log(this.markers);
+        if(this.markers == undefined) this.markers = L.markerClusterGroup();
+        else {
+            this.removeIcons();
+            this.markers = L.markerClusterGroup();
+        }
       let popup = L.popup();
-      if (this.control) {
-          this.mymap.removeControl(this.control);
-          this.control = L.control.layers(null, null);
-      }
       
       this.markers.addTo(this.mymap);
 
@@ -103,58 +113,92 @@ export class NearEventsPage {
       this.informative_layers = L.featureGroup.subGroup(this.markers);
       this.all_markers_layer = L.featureGroup.subGroup(this.markers);
 
-      for (let event of this.events) {
 
-          let marker = L.marker(event.coordinates).on('click', (e) => {
-              marker.bindPopup(popup);
-              popup.setContent(
-                  "<p class='event-title'>" + event.name + "</p><p class='event-date'> " +
-                  moment(event.date).locale('es').format("dddd, DD MMMM, YYYY") +
-                  "</p><p class='time-date'>Hora: " + event.begin_time + "-" + event.end_time + "</p>" +
-                  "<p class='event-description'> " +
-                  (event.description.lenght > 6 ? event.description.substring(6) + "..." : event.description)
-                  + "</p>" +
-                  "<ion-row justify-content-center><ion-col col-6>"+
-                  "<button class='button button-md button-default button-default-md btnAccept' onClick=\"" +
-                  "document.getElementById('eventId1').value='" + event.id + "'; " +
-                  "document.getElementById('eventId1').click();" +
-                  "\">Ver Detalle</button></ion-col>" +
-                  "<ion-col col-6><button class='button button-md button-default button-default-md btnPlus' onClick=\"" +
-                  "document.getElementById('eventId2').value='" + event.id + "'; " +
-                  "document.getElementById('eventId2').click();" +
-                  "\">Asistir</button></ion-col>"+
-                  "</ion-row>");
+    for (let event of this.events) {
+        if(this.my_events.indexOf(event.id) == -1){
+            let marker = L.marker(event.coordinates).on('click', (e) => {
+                marker.bindPopup(popup);
+                popup.setContent(
+                    "<p class='event-title'>" + event.name + "</p><p class='event-date'> " +
+                    moment(event.date).locale('es').format("dddd, DD MMMM, YYYY") +
+                    "</p><p class='time-date'>Hora: " + event.begin_time + "-" + event.end_time + "</p>" +
+                    "<p class='event-description'> " +
+                    (event.description.lenght > 6 ? event.description.substring(6) + "..." : event.description)
+                    + "</p>" +
+                    "<ion-row justify-content-center><ion-col col-6>"+
+                    "<button class='button button-md button-default button-default-md btnAccept' onClick=\"" +
+                    "document.getElementById('eventId1').value='" + event.id + "'; " +
+                    "document.getElementById('eventId1').click();" +
+                    "\">Ver Detalle</button></ion-col>" +
+                    "<ion-col col-6><button class='button button-md button-default button-default-md btnPlus' onClick=\"" +
+                    "document.getElementById('eventId2').value='" + event.id + "'; " +
+                    "document.getElementById('eventId2').click();" +
+                    "\">Asistir</button></ion-col>"+
+                    "</ion-row>");
 
-          });
-          for (let i of event.type) {
-              if (i.name === "Deportivo" && i.value) {
-                  marker.addTo(this.sport_layers);
-              }
-              if (i.name === "Academico" && i.value) {
-                  marker.addTo(this.academic_layers);
-              }
-              if (i.name === "Cultural" && i.value) {
-                  marker.addTo(this.cultural_layers);
-              }
-              if (i.name === "Ocio" && i.value) {
-                  marker.addTo(this.ocio_layers);
-              }
-              if (i.name === "Informativo" && i.value) {
-                  marker.addTo(this.informative_layers);
-              }
-          }
-          marker.addTo(this.all_markers_layer);
+            });
+            for (let i of event.type) {
+                if (i.name === "Deportivo" && i.value) {
+                    marker.addTo(this.sport_layers);
+                }
+                if (i.name === "Academico" && i.value) {
+                    marker.addTo(this.academic_layers);
+                }
+                if (i.name === "Cultural" && i.value) {
+                    marker.addTo(this.cultural_layers);
+                }
+                if (i.name === "Ocio" && i.value) {
+                    marker.addTo(this.ocio_layers);
+                }
+                if (i.name === "Informativo" && i.value) {
+                    marker.addTo(this.informative_layers);
+                }
+            }
+            marker.addTo(this.all_markers_layer);
 
-          var overlayMaps = {
-              "Deportivo": this.sport_layers,
-              "Academico": this.academic_layers,
-              "Cultural": this.cultural_layers,
-              "Ocio": this.ocio_layers,
-              "Informativo": this.informative_layers,
-              "Todos": this.all_markers_layer
-          };
+        } else {
+            let marker = L.marker(event.coordinates).on('click', (e) => {
+                marker.bindPopup(popup);
+                popup.setContent(
+                    "<p class='event-title'>" + event.name + "</p><p class='event-date'> " +
+                    moment(event.date).locale('es').format("dddd, DD MMMM, YYYY") +
+                    "</p><p class='time-date'>Hora: " + event.begin_time + "-" + event.end_time + "</p>" +
+                    "<p class='event-description'> " +
+                    (event.description.lenght > 6 ? event.description.substring(6) + "..." : event.description)
+                    + "</p>" +
+                    "<ion-row justify-content-center><ion-col col-6>"+
+                    "<button class='button button-md button-default button-default-md btnAccept' onClick=\"" +
+                    "document.getElementById('eventId1').value='" + event.id + "'; " +
+                    "document.getElementById('eventId1').click();" +
+                    "\">Ver Detalle</button></ion-col>" +
+                    "<ion-col col-6><button class='button button-md button-default button-default-md btnPlus' onClick=\"" +
+                    "document.getElementById('eventId3').value='" + event.id + "'; " +
+                    "document.getElementById('eventId3').click();" +
+                    "\">Desistir</button></ion-col>"+
+                    "</ion-row>");
 
-      }
+            });
+            for (let i of event.type) {
+                if (i.name === "Deportivo" && i.value) {
+                    marker.addTo(this.sport_layers);
+                }
+                if (i.name === "Academico" && i.value) {
+                    marker.addTo(this.academic_layers);
+                }
+                if (i.name === "Cultural" && i.value) {
+                    marker.addTo(this.cultural_layers);
+                }
+                if (i.name === "Ocio" && i.value) {
+                    marker.addTo(this.ocio_layers);
+                }
+                if (i.name === "Informativo" && i.value) {
+                    marker.addTo(this.informative_layers);
+                }
+            }
+            marker.addTo(this.all_markers_layer);
+
+        }
+    }
       /*let control = L.control.layers(null, null, { collapsed: true });
       
       control.addOverlay(this.sport_layers, 'Deportivo');
@@ -163,16 +207,33 @@ export class NearEventsPage {
       control.addOverlay(this.ocio_layers, 'Ocio');
       control.addOverlay(this.informative_layers, 'Informativo');
       control.addTo(this.mymap);*/
-
-      L.control.layers(overlayMaps).addTo(this.mymap);
-
-      this.academic_layers.addTo(this.mymap);
-      this.sport_layers.addTo(this.mymap);
-      this.cultural_layers.addTo(this.mymap);
-      this.ocio_layers.addTo(this.mymap);
-      this.informative_layers.addTo(this.mymap);
-      this.all_markers_layer.addTo(this.mymap);
-     
+      var overlayMaps = {
+        "Deportivo": this.sport_layers,
+        "Academico": this.academic_layers,
+        "Cultural": this.cultural_layers,
+        "Ocio": this.ocio_layers,
+        "Informativo": this.informative_layers,
+        "Todos": this.all_markers_layer
+        };
+        if(this.controlLayers == undefined){
+            this.controlLayers = L.control.layers(overlayMaps).addTo(this.mymap);
+            this.academic_layers.addTo(this.mymap);
+            this.sport_layers.addTo(this.mymap);
+            this.cultural_layers.addTo(this.mymap);
+            this.ocio_layers.addTo(this.mymap);
+            this.informative_layers.addTo(this.mymap);
+            this.all_markers_layer.addTo(this.mymap);
+        } else {
+            console.log("removiendo");
+            this.mymap.removeControl(this.controlLayers);
+            this.controlLayers = L.control.layers(overlayMaps).addTo(this.mymap);
+            this.academic_layers.addTo(this.mymap);
+            this.sport_layers.addTo(this.mymap);
+            this.cultural_layers.addTo(this.mymap);
+            this.ocio_layers.addTo(this.mymap);
+            this.informative_layers.addTo(this.mymap);
+            this.all_markers_layer.addTo(this.mymap);
+        }
   }
 
   open(event) {
@@ -225,9 +286,21 @@ export class NearEventsPage {
   attend_event(event) {
       this.firePro.attend_event(event).then(res => {
           this.configPro.presentToast("Irás al evento " + this.events.filter(item => item.id === event)[0].name);
+          this.removeIcons();
+          this.getMyEvents()
       }).catch(err => {
           console.log(err)
           this.configPro.presentToast("El evento " + this.events.filter(item => item.id === event)[0].name + " ya esta en tu lista");
       });
   }
+
+  cancel_event(event){
+      this.firePro.cancelEvent(event).then(
+          data => {
+              this.removeIcons();
+              this.getMyEvents();
+          }
+      );
+  }
+
 }

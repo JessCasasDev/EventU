@@ -228,6 +228,24 @@ export class FirebaseProvider {
     });
   }
 
+  getAllEvents(){
+    let events = [];
+    return new Promise((resolve, reject) => {
+      var ref = this.fireDB.database.ref('events_users');
+      ref.child(this.emailshort).once("value",data => {
+        data.forEach(a => {
+          events.push(a.key);
+          return false;
+        });
+      }).then( data =>{
+        resolve(events);
+      }).catch( error => {
+        console.log(error);
+        reject(error);
+      })
+    });
+  }
+
   attend_event(event) {
       let events = [];
       return new Promise((resolve, reject) => {
@@ -238,7 +256,6 @@ export class FirebaseProvider {
             return false;
           });
         }).then(data => {
-          console.log(events);
             if (events.filter(item => item === event)[0] !== undefined) {
                 reject("user has already attend event");
             } else {
@@ -341,6 +358,19 @@ export class FirebaseProvider {
           else
               resolve(false);
       })
+  }
+
+  cancelEvent(event){
+    return new Promise((resolve, reject) => {
+      var ref = this.fireDB.database.ref('events_users');
+      ref.child(this.emailshort).child(event).remove().then( data => {
+        this.configPro.presentToast("Cancelada tu asistencia");
+        resolve();
+      }).catch( error => {
+        console.log(error);
+        this.configPro.presentToast("No se ha podido cancelar la asistencia");
+      });
+    })
   }
 
   //Users
