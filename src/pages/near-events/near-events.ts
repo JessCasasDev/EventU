@@ -36,6 +36,7 @@ export class NearEventsPage {
   all_markers_layer: any;
   my_events: any;
   controlLayers: any;
+  today: Date;
 
   localeString = {
       monday: true,
@@ -58,6 +59,8 @@ export class NearEventsPage {
     this.lat = this.geoLoc.lat;
     this.lng = this.geoLoc.lng;
     this.date = new Date();
+    this.today = new Date();
+    console.log(this.today);
     this.configPro.dismissLoading();
   }
 
@@ -96,7 +99,6 @@ export class NearEventsPage {
   }
 
   loadIcons() {
-        console.log(this.markers);
         if(this.markers == undefined) this.markers = L.markerClusterGroup();
         else {
             this.removeIcons();
@@ -116,68 +118,127 @@ export class NearEventsPage {
 
     for (let event of this.events) {
         if(this.my_events.indexOf(event.id) == -1){
-            let marker = L.marker(event.coordinates).on('click', (e) => {
-                marker.bindPopup(popup);
-                popup.setContent(
-                    "<p class='event-title'>" + event.name + "</p><p class='event-date'> " +
-                    moment(event.date).locale('es').format("dddd, DD MMMM, YYYY") +
-                    "</p><p class='time-date'>Hora: " + event.begin_time + "-" + event.end_time + "</p>" +
-                    "<p class='event-description'> " +
-                    (event.description.lenght > 6 ? event.description.substring(6) + "..." : event.description)
-                    + "</p>" +
-                    "<ion-row justify-content-center><ion-col col-6>"+
-                    "<button class='button button-md button-default button-default-md btnAccept' onClick=\"" +
-                    "document.getElementById('eventId1').value='" + event.id + "'; " +
-                    "document.getElementById('eventId1').click();" +
-                    "\">Ver Detalle</button></ion-col>" +
-                    "<ion-col col-6><button class='button button-md button-default button-default-md btnPlus' onClick=\"" +
-                    "document.getElementById('eventId2').value='" + event.id + "'; " +
-                    "document.getElementById('eventId2').click();" +
-                    "\">Asistir</button></ion-col>"+
-                    "</ion-row>");
+            let marker;
+            if(this.validateTime(event)){
+                marker = L.marker(event.coordinates).on('click', (e) => {
+                    marker.bindPopup(popup);
+                    popup.setContent(
+                        "<p class='event-title'>" + event.name + "</p><p class='event-date'> " +
+                        moment(event.date).locale('es').format("dddd, DD MMMM, YYYY") +
+                        "</p><p class='time-date'>Hora: " + event.begin_time + "-" + event.end_time + "</p>" +
+                        "<p class='event-description'> " +
+                        (event.description.lenght > 6 ? event.description.substring(6) + "..." : event.description)
+                        + "</p>" +
+                        "<ion-row justify-content-center><ion-col col-6>"+
+                        "<button class='button button-md button-default button-default-md btnAccept' onClick=\"" +
+                        "document.getElementById('eventId1').value='" + event.id + "'; " +
+                        "document.getElementById('eventId1').click();" +
+                        "\">Ver Detalle</button></ion-col>" +
+                        "<ion-col col-6><button class='button button-md button-default button-default-md btnPlus' onClick=\"" +
+                        "document.getElementById('eventId2').value='" + event.id + "'; " +
+                        "document.getElementById('eventId2').click();" +
+                        "\">Asistir</button></ion-col>"+
+                        "</ion-row>");
 
-            });
-            for (let i of event.type) {
-                if (i.name === "Deportivo" && i.value) {
-                    marker.addTo(this.sport_layers);
+                });
+                for (let i of event.type) {
+                    if (i.name === "Deportivo" && i.value) {
+                        marker.addTo(this.sport_layers);
+                    }
+                    if (i.name === "Academico" && i.value) {
+                        marker.addTo(this.academic_layers);
+                    }
+                    if (i.name === "Cultural" && i.value) {
+                        marker.addTo(this.cultural_layers);
+                    }
+                    if (i.name === "Ocio" && i.value) {
+                        marker.addTo(this.ocio_layers);
+                    }
+                    if (i.name === "Informativo" && i.value) {
+                        marker.addTo(this.informative_layers);
+                    }
                 }
-                if (i.name === "Academico" && i.value) {
-                    marker.addTo(this.academic_layers);
+                marker.addTo(this.all_markers_layer);
+            } else {
+                marker = L.marker(event.coordinates).on('click', (e) => {
+                    marker.bindPopup(popup);
+                    popup.setContent(
+                        "<p class='event-title'>" + event.name + "</p><p class='event-date'> " +
+                        moment(event.date).locale('es').format("dddd, DD MMMM, YYYY") +
+                        "</p><p class='time-date'>Hora: " + event.begin_time + "-" + event.end_time + "</p>" +
+                        "<p class='event-description'> " +
+                        (event.description.lenght > 6 ? event.description.substring(6) + "..." : event.description)
+                        + "</p>" +
+                        "<ion-row justify-content-center><ion-col col-6>"+
+                        "<button class='button button-md button-default button-default-md btnAccept' onClick=\"" +
+                        "document.getElementById('eventId1').value='" + event.id + "'; " +
+                        "document.getElementById('eventId1').click();" +
+                        "\">Ver Detalle</button></ion-col>" +
+                        "</ion-row>");
+
+                });
+                for (let i of event.type) {
+                    if (i.name === "Deportivo" && i.value) {
+                        marker.addTo(this.sport_layers);
+                    }
+                    if (i.name === "Academico" && i.value) {
+                        marker.addTo(this.academic_layers);
+                    }
+                    if (i.name === "Cultural" && i.value) {
+                        marker.addTo(this.cultural_layers);
+                    }
+                    if (i.name === "Ocio" && i.value) {
+                        marker.addTo(this.ocio_layers);
+                    }
+                    if (i.name === "Informativo" && i.value) {
+                        marker.addTo(this.informative_layers);
+                    }
                 }
-                if (i.name === "Cultural" && i.value) {
-                    marker.addTo(this.cultural_layers);
-                }
-                if (i.name === "Ocio" && i.value) {
-                    marker.addTo(this.ocio_layers);
-                }
-                if (i.name === "Informativo" && i.value) {
-                    marker.addTo(this.informative_layers);
-                }
+                marker.addTo(this.all_markers_layer);
             }
-            marker.addTo(this.all_markers_layer);
-
         } else {
-            let marker = L.marker(event.coordinates).on('click', (e) => {
-                marker.bindPopup(popup);
-                popup.setContent(
-                    "<p class='event-title'>" + event.name + "</p><p class='event-date'> " +
-                    moment(event.date).locale('es').format("dddd, DD MMMM, YYYY") +
-                    "</p><p class='time-date'>Hora: " + event.begin_time + "-" + event.end_time + "</p>" +
-                    "<p class='event-description'> " +
-                    (event.description.lenght > 6 ? event.description.substring(6) + "..." : event.description)
-                    + "</p>" +
-                    "<ion-row justify-content-center><ion-col col-6>"+
-                    "<button class='button button-md button-default button-default-md btnAccept' onClick=\"" +
-                    "document.getElementById('eventId1').value='" + event.id + "'; " +
-                    "document.getElementById('eventId1').click();" +
-                    "\">Ver Detalle</button></ion-col>" +
-                    "<ion-col col-6><button class='button button-md button-default button-default-md btnPlus' onClick=\"" +
-                    "document.getElementById('eventId3').value='" + event.id + "'; " +
-                    "document.getElementById('eventId3').click();" +
-                    "\">Desistir</button></ion-col>"+
-                    "</ion-row>");
+            let marker;
+            if(this.validateTime(event)){
+                marker = L.marker(event.coordinates).on('click', (e) => {
+                    marker.bindPopup(popup);
+                    popup.setContent(
+                        "<p class='event-title'>" + event.name + "</p><p class='event-date'> " +
+                        moment(event.date).locale('es').format("dddd, DD MMMM, YYYY") +
+                        "</p><p class='time-date'>Hora: " + event.begin_time + "-" + event.end_time + "</p>" +
+                        "<p class='event-description'> " +
+                        (event.description.lenght > 6 ? event.description.substring(6) + "..." : event.description)
+                        + "</p>" +
+                        "<ion-row justify-content-center><ion-col col-6>"+
+                        "<button class='button button-md button-default button-default-md btnAccept' onClick=\"" +
+                        "document.getElementById('eventId1').value='" + event.id + "'; " +
+                        "document.getElementById('eventId1').click();" +
+                        "\">Ver Detalle</button></ion-col>" +
+                        "<ion-col col-6><button class='button button-md button-default button-default-md btnPlus' onClick=\"" +
+                        "document.getElementById('eventId3').value='" + event.id + "'; " +
+                        "document.getElementById('eventId3').click();" +
+                        "\">Desistir</button></ion-col>"+
+                        "</ion-row>");
 
-            });
+                });
+            } else {
+                marker = L.marker(event.coordinates).on('click', (e) => {
+                    marker.bindPopup(popup);
+                    popup.setContent(
+                        "<p class='event-title'>" + event.name + "</p><p class='event-date'> " +
+                        moment(event.date).locale('es').format("dddd, DD MMMM, YYYY") +
+                        "</p><p class='time-date'>Hora: " + event.begin_time + "-" + event.end_time + "</p>" +
+                        "<p class='event-description'> " +
+                        (event.description.lenght > 6 ? event.description.substring(6) + "..." : event.description)
+                        + "</p>" +
+                        "<ion-row justify-content-center><ion-col col-6>"+
+                        "<button class='button button-md button-default button-default-md btnAccept' onClick=\"" +
+                        "document.getElementById('eventId1').value='" + event.id + "'; " +
+                        "document.getElementById('eventId1').click();" +
+                        "\">Ver Detalle</button></ion-col>" +
+                        "</ion-row>");
+
+                });
+            }
             for (let i of event.type) {
                 if (i.name === "Deportivo" && i.value) {
                     marker.addTo(this.sport_layers);
@@ -253,6 +314,7 @@ export class NearEventsPage {
   }
   
   changeDate(event) {
+
       this.date = event;
       this.removeIcons();
       this.date.setHours(0, 0, 0, 0); //It is going to show all the events by date, no matter hours
@@ -301,6 +363,17 @@ export class NearEventsPage {
               this.getMyEvents();
           }
       );
+  }
+
+  validateTime(event){
+      this.today = new Date();
+    let todayDate = this.today.toLocaleDateString();
+    let todayTime = this.today.toLocaleTimeString();
+    if(new Date(event.date).toLocaleDateString().split("T")[0] > todayDate) return true;
+    else if(new Date(event.date).toLocaleDateString().split("T")[0] == todayDate ) {
+        if(event.begin_time > todayTime || event.end_time > todayTime) return true;
+        else return false;
+    } else return false;
   }
 
 }
