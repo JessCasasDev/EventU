@@ -2,12 +2,12 @@
   <ion-list *ngIf="!loadingEvents && events.length > 0">
 
     <ion-item-sliding *ngFor="let event of events" #item>
-      <ion-item>
+      <ion-item [ngClass]="{'losingEvent': !event.editable}">
           {{event.name}}
       </ion-item>
       <ion-item-options side="right">
         <button ion-button color="blueU" (click)="eventDetail(event)">Detalle</button>
-        <button ion-button color="yellowU" (click)="eventEdit(event)">
+        <button *ngIf="event.editable" ion-button color="yellowU" (click)="eventEdit(event)">
           <ion-icon name="md-create"></ion-icon>
         </button>
       </ion-item-options>

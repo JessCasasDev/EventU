@@ -12,6 +12,7 @@ export class OwnEventsPage {
 
   events: any;
   loadingEvents: boolean;
+  today: Date;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               public firePro: FirebaseProvider, public eventsPro: Events,
@@ -25,6 +26,7 @@ export class OwnEventsPage {
   }
   initialize(){
     this.events = [];
+    this.today = new Date();
     this.loadingEvents = true;
   }
 
@@ -32,6 +34,7 @@ export class OwnEventsPage {
     this.firePro.getEventsById().then( data => {
       this.events = data;
       this.loadingEvents = false;
+      this.validateEvents();
     }).catch( error => {
       this.loadingEvents = false;
     });
@@ -72,5 +75,25 @@ export class OwnEventsPage {
 
   eventEdit(event){
     this.eventsPro.publish('event:edit', event);
+  }
+
+
+  validateEvents(){
+    this.events.forEach(element => {
+      element.editable = this.validateTime(element);
+    });
+    console.log(this.events)
+  }
+
+  validateTime(event){
+    console.log(event);
+    this.today = new Date();
+    let todayDate = this.today.toLocaleDateString();
+    let todayTime = this.today.toLocaleTimeString();
+    if(new Date(event.date).toLocaleDateString().split("T")[0] > todayDate) return true;
+    else if(new Date(event.date).toLocaleDateString().split("T")[0] == todayDate ) {
+        if(event.begin_time > todayTime || event.end_time > todayTime) return true;
+        else return false;
+    } else return false;
   }
 }
