@@ -25,9 +25,14 @@
         </button>        
       </ion-col>
     </ion-row>
+    <ion-row *ngIf="countClock">
+      <ion-col col-12>
+        Debes Esperar {{count}} segundos para poder intentar loguearte de nuevo
+      </ion-col>
+    </ion-row>
     <ion-row>
       <ion-col col-12>
-        <button ion-button full class="btnAccept" (click)="login()">Entrar</button>
+        <button ion-button full [disabled]="countClock" class="btnAccept" (click)="login()">Entrar</button>
       </ion-col>
     </ion-row>
     <ion-row>

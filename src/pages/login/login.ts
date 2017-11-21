@@ -15,16 +15,53 @@ export class LoginPage {
   email:String;
   password:String;
   user: any = [];
+  validationTime: Date;
+  countClock: boolean;
+  count: number;
+
   constructor(public navCtrl: NavController, public navParams: NavParams,
               public eventsPro: Events, public firePro: FirebaseProvider,
               public configPro: ConfigProvider, public alertCtrl: AlertController) {
     this.initialize();
+    //this.firePro.setTimeValidation();
+    //this.firePro.resetTimeValidation();
   }
 
   initialize(){
     this.email = "";
     this.password = "";
-    this.validateSession();
+    this.countClock = false;
+    this.firePro.getTimeValidation().then( data => {
+      let date: any;
+      date = data;
+      console.log(date);
+      if(!data) this.validateSession();
+      else this.lockLogin(date);
+    });
+  }
+
+  lockLogin(date){
+    this.countClock = true;
+    this.count = 0;
+    this.validationTime = new Date(date);
+    this.validateTime();
+  }
+
+  validateTime(){
+    this.firePro.getTimes().then( data => {
+      let times:any;
+      times = data;
+      let limit = 60 * times;
+      let i = 0;
+      let inter = setInterval( todo => {
+        i = (new Date().getTime() - this.validationTime.getTime())/1000;
+        this.count = Math.round(limit - i);
+        if( this.count <= 0){
+          this.countClock = false;
+          clearInterval(inter);
+        } 
+      }, 1000);
+    });
   }
 
   ionViewDidLoad() {
@@ -39,8 +76,10 @@ export class LoginPage {
         this.user = data;
         if(this.user.emailVerified){
           this.firePro.getUserProfile(this.user.email).then( user => {
-            this.eventsPro.publish('user:login',this.user.uid, user[1],"url imagen");
-            this.navCtrl.setRoot(NearEventsPage);
+            this.firePro.resetTimeValidation().then( data =>{
+              this.eventsPro.publish('user:login',this.user.uid, user[1],"url imagen");
+              this.navCtrl.setRoot(NearEventsPage);
+            });
           });
         } else {
           this.configPro.presentToast("Debes Validar tu correo primero");
@@ -68,10 +107,20 @@ export class LoginPage {
       (data) => {
         console.log(data);
         this.user = data;
-        this.eventsPro.publish('user:login',this.user.uid,this.user.email,"url imagen");
-        this.navCtrl.setRoot(NearEventsPage);
+        this.firePro.resetTimeValidation().then( data =>{
+          this.eventsPro.publish('user:login',this.user.uid,this.user.email,"url imagen");
+          this.navCtrl.setRoot(NearEventsPage);
+        });
       }
     ).catch( error => {
+      console.log(error);
+      if(error == "auth/too-many-requests"){
+        this.firePro.setTimeValidation().then( data => {
+          let t: any;
+          t = data;
+          this.lockLogin(t.time);
+        })
+      }
       this.configPro.dismissLoading();
     });
   }

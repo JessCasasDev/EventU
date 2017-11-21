@@ -4,6 +4,7 @@ import 'rxjs/add/operator/map';
 import { AngularFireDatabase  } from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { ConfigProvider } from '../config/config'
+import { Storage } from '@ionic/storage';
 
 @Injectable()
 export class FirebaseProvider {
@@ -14,7 +15,8 @@ export class FirebaseProvider {
   assisted_events = [];
 
   constructor(public http: Http, public fireDB: AngularFireDatabase,
-              public fireAuth: AngularFireAuth, public configPro: ConfigProvider) {
+              public fireAuth: AngularFireAuth, public configPro: ConfigProvider,
+              private storagePro: Storage) {
     console.log('Hello FirebaseProvider Provider');
   }
 
@@ -34,8 +36,81 @@ export class FirebaseProvider {
   }
 
   //Authentication
+
+  getTimeValidation(){
+    return new Promise((resolve,reject) => {
+      this.storagePro.get("validationTime").then( data => {
+        resolve(data);          
+      })
+      .catch( error => {
+        console.log(error);
+        this.configPro.presentToast("No se puede acceder en este momento, Reintenta por favor");
+        reject(error);
+      })
+    });
+  }
+
+  getTimes(){
+    return new Promise((resolve,reject) => {
+      this.storagePro.get("times").then( data => {
+        resolve(data);          
+      })
+      .catch( error => {
+        console.log(error);
+        this.configPro.presentToast("No se puede acceder en este momento, Reintenta por favor");
+        reject(error);
+      })
+    });
+  }
+
+  setTimeValidation(){
+    return new Promise((resolve,reject) => {
+      let time = new Date();
+      this.storagePro.set("validationTime", time).then( data => {
+        this.storagePro.get("times").then( times => {
+          if(times){
+            if(times <= 100){
+              this.storagePro.set("times", 100000).then( times => {
+                resolve({"time": time,"times": 100000});
+              });
+            } else{
+              this.storagePro.set("times", times*10).then( times => {
+                resolve({"time": time,"times":times*10});
+              });
+            }
+          } else {
+            this.storagePro.set("times", 1).then( times => {
+              resolve({"time": time,"times":1});
+            });
+          }
+        });
+      })
+      .catch( error => {
+        console.log(error);
+        this.configPro.presentToast("No se puede acceder en este momento, Reintenta por favor");
+        reject(error);
+      })
+    });
+  }
+
+  resetTimeValidation(){
+    return new Promise((resolve,reject) => {
+      let time = new Date();
+      this.storagePro.set("validationTime", null).then( data => {
+        console.log("limpiando")
+        this.storagePro.set("times", null).then( data => resolve());
+      })
+      .catch( error => {
+        console.log(error);
+        this.configPro.presentToast("No se puede acceder en este momento, Reintenta por favor");
+        reject(error);
+      })
+    });
+  }
+
   login(email, password){
     return new Promise((resolve,reject) => {
+      
       this.fireAuth.auth.signInWithEmailAndPassword(email,password).then(
         (data) => {
           this.user = data;
@@ -45,14 +120,17 @@ export class FirebaseProvider {
           }
           else this.configPro.presentToast("Debes Validar tu correo primero");
         }
-    ).catch((error) => {
-      console.log(error);
-      if(error.code == "auth/network-request-failed"){
-        this.configPro.presentToast("Verifica tu conexión a internet");
-      }
-      else this.configPro.presentToast("Correo y/o contraseña incorrectos");
-      reject(error);
-      });
+      ).catch((error) => {
+        if(error.code == "auth/network-request-failed"){
+          this.configPro.presentToast("Verifica tu conexión a internet");
+        } else if( error.code == "auth/too-many-requests" ){
+          this.configPro.presentToast("Demasiados errores de contraseña");
+          reject("auth/too-many-requests");
+        }
+        else this.configPro.presentToast("Correo y/o contraseña incorrectos");
+        reject(error);
+        });
+        
     });
   }
 
