@@ -143,7 +143,7 @@ export class FirebaseProvider {
       this.storagePro.set("validationTime", time).then( data => {
         this.storagePro.get("times").then( times => {
           if(times){
-            if(times <= 100){
+            if(times >= 100){
               this.storagePro.set("times", 100000).then( times => {
                 resolve({"time": time,"times": 100000});
               });
