@@ -493,7 +493,7 @@ export class FirebaseProvider {
     return new Promise((resolve, reject) => {
       this.fireDB.database.ref('users').child(this.emailshort).once("value",data =>{
         console.log(data.val())
-        if(data.val()){
+        if(data.val() != null){
           this.user.name = data.val().username;
           this.user.phone = data.val().phone;
           resolve(this.user.name);
