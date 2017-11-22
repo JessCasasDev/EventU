@@ -492,10 +492,15 @@ export class FirebaseProvider {
     this.cutEmail(email);
     return new Promise((resolve, reject) => {
       this.fireDB.database.ref('users').child(this.emailshort).once("value",data =>{
-        this.user.name = data.val().username;
-        this.user.phone = data.val().phone;
-        if(data) resolve(this.user.name);
-        else console.log(data);
+        console.log(data.val())
+        if(data.val()){
+          this.user.name = data.val().username;
+          this.user.phone = data.val().phone;
+          resolve(this.user.name);
+        } else {
+          console.log(this.user.email);
+          resolve(this.user.email);
+        }
       });
     });
   }
