@@ -148,7 +148,7 @@ export class LoginPage {
     this.firePro.getTimes().then( data => {
       let times:any;
       times = data;
-      let limit = 60 * times;
+      let limit = 30 * times;
       let i = 0;
       let inter = setInterval( todo => {
         i = (new Date().getTime() - this.validationTime.getTime())/1000;
