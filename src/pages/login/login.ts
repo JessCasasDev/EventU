@@ -34,33 +34,8 @@ export class LoginPage {
     this.firePro.getTimeValidation().then( data => {
       let date: any;
       date = data;
-      console.log(date);
       if(!data) this.validateSession();
       else this.lockLogin(date);
-    });
-  }
-
-  lockLogin(date){
-    this.countClock = true;
-    this.count = 0;
-    this.validationTime = new Date(date);
-    this.validateTime();
-  }
-
-  validateTime(){
-    this.firePro.getTimes().then( data => {
-      let times:any;
-      times = data;
-      let limit = 60 * times;
-      let i = 0;
-      let inter = setInterval( todo => {
-        i = (new Date().getTime() - this.validationTime.getTime())/1000;
-        this.count = Math.round(limit - i);
-        if( this.count <= 0){
-          this.countClock = false;
-          clearInterval(inter);
-        } 
-      }, 1000);
     });
   }
 
@@ -77,7 +52,7 @@ export class LoginPage {
         if(this.user.emailVerified){
           this.firePro.getUserProfile(this.user.email).then( user => {
             this.firePro.resetTimeValidation().then( data =>{
-              this.eventsPro.publish('user:login',this.user.uid, user[1],"url imagen");
+              this.eventsPro.publish('user:login',this.user.uid, user,"url imagen");
               this.navCtrl.setRoot(NearEventsPage);
             });
           });
@@ -160,5 +135,29 @@ export class LoginPage {
       ]
     });
     prompt.present();
+  }
+
+  lockLogin(date){
+    this.countClock = true;
+    this.count = 0;
+    this.validationTime = new Date(date);
+    this.validateTime();
+  }
+
+  validateTime(){
+    this.firePro.getTimes().then( data => {
+      let times:any;
+      times = data;
+      let limit = 60 * times;
+      let i = 0;
+      let inter = setInterval( todo => {
+        i = (new Date().getTime() - this.validationTime.getTime())/1000;
+        this.count = Math.round(limit - i);
+        if( this.count <= 0){
+          this.countClock = false;
+          clearInterval(inter);
+        } 
+      }, 1000);
+    });
   }
 }

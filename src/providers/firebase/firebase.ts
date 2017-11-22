@@ -13,6 +13,7 @@ export class FirebaseProvider {
   emailshort: string;
   inscribed_events = [];
   assisted_events = [];
+  profile: any;
 
   constructor(public http: Http, public fireDB: AngularFireDatabase,
               public fireAuth: AngularFireAuth, public configPro: ConfigProvider,
@@ -36,6 +37,79 @@ export class FirebaseProvider {
   }
 
   //Authentication
+
+  login(email, password){
+    return new Promise((resolve,reject) => {
+      
+      this.fireAuth.auth.signInWithEmailAndPassword(email,password).then(
+        (data) => {
+          this.user = data;
+          if(this.user.emailVerified){
+            this.getUserProfile(email);
+            resolve(data);
+          }
+          else this.configPro.presentToast("Debes Validar tu correo primero");
+        }
+      ).catch((error) => {
+        if(error.code == "auth/network-request-failed"){
+          this.configPro.presentToast("Verifica tu conexión a internet");
+        } else if( error.code == "auth/too-many-requests" ){
+          this.configPro.presentToast("Demasiados errores de contraseña");
+          reject("auth/too-many-requests");
+        }
+        else this.configPro.presentToast("Correo y/o contraseña incorrectos");
+        reject(error);
+        });
+        
+    });
+  }
+
+  singUp(email,password){
+    return new Promise((resolve,reject) => {
+      this.fireAuth.auth.createUserWithEmailAndPassword(email,password).then(
+        (data) => {
+          this.fireAuth.auth.onAuthStateChanged(user => {
+            user.sendEmailVerification(); 
+          })
+          resolve(data);
+        }
+    ).catch((error) => {
+        let err: any = [];
+        err = error;
+        console.log(error);
+        if(err.code == "auth/email-already-in-use")
+          this.configPro.presentToast("El correo ya se encuentra registrado, por favor valida tu correo")
+      });
+    });
+  }
+
+  logout(){
+    return new Promise((resolve,reject) => {
+      this.fireAuth.auth.signOut().then( data => {
+
+        this.configPro.dismissLoading();
+        resolve(data)
+      })
+      .catch( error => {
+        console.log(error);
+        this.configPro.presentToast("No se ha podido cerrar sesión")
+      });
+    })
+  }
+
+  resetPassword(email){
+    return new Promise( (resolve,reject) => {
+      this.fireAuth.auth.sendPasswordResetEmail(email).then( data => {
+        console.log(data);
+        resolve();
+      }).catch( error => {
+        console.log(error);
+        if(error.code == "auth/user-not-found"){
+          this.configPro.presentToast("El correo no existe en eventu");
+        }
+      })
+    })
+  }
 
   getTimeValidation(){
     return new Promise((resolve,reject) => {
@@ -106,78 +180,6 @@ export class FirebaseProvider {
         reject(error);
       })
     });
-  }
-
-  login(email, password){
-    return new Promise((resolve,reject) => {
-      
-      this.fireAuth.auth.signInWithEmailAndPassword(email,password).then(
-        (data) => {
-          this.user = data;
-          if(this.user.emailVerified){
-            this.getUserProfile(email);
-            resolve(data);
-          }
-          else this.configPro.presentToast("Debes Validar tu correo primero");
-        }
-      ).catch((error) => {
-        if(error.code == "auth/network-request-failed"){
-          this.configPro.presentToast("Verifica tu conexión a internet");
-        } else if( error.code == "auth/too-many-requests" ){
-          this.configPro.presentToast("Demasiados errores de contraseña");
-          reject("auth/too-many-requests");
-        }
-        else this.configPro.presentToast("Correo y/o contraseña incorrectos");
-        reject(error);
-        });
-        
-    });
-  }
-
-  singUp(email,password){
-    return new Promise((resolve,reject) => {
-      this.fireAuth.auth.createUserWithEmailAndPassword(email,password).then(
-        (data) => {
-          this.fireAuth.auth.onAuthStateChanged(user => {
-            user.sendEmailVerification(); 
-          })
-          resolve(data);
-        }
-    ).catch((error) => {
-        let err: any = [];
-        err = error;
-        console.log(error);
-        if(err.code == "auth/email-already-in-use")
-          this.configPro.presentToast("El correo ya se encuentra registrado, por favor valida tu correo")
-      });
-    });
-  }
-
-  logout(){
-    return new Promise((resolve,reject) => {
-      this.fireAuth.auth.signOut().then( data => {
-        this.configPro.dismissLoading()
-        resolve(data)
-      })
-      .catch( error => {
-        console.log(error);
-        this.configPro.presentToast("No se ha podido cerrar sesión")
-      });
-    })
-  }
-
-  resetPassword(email){
-    return new Promise( (resolve,reject) => {
-      this.fireAuth.auth.sendPasswordResetEmail(email).then( data => {
-        console.log(data);
-        resolve();
-      }).catch( error => {
-        console.log(error);
-        if(error.code == "auth/user-not-found"){
-          this.configPro.presentToast("El correo no existe en eventu");
-        }
-      })
-    })
   }
   
   //Events
@@ -489,12 +491,12 @@ export class FirebaseProvider {
   getUserProfile(email:string){
     this.cutEmail(email);
     return new Promise((resolve, reject) => {
-      this.fireDB.list('/users/'+this.emailshort).valueChanges().subscribe( data =>{
-        this.user.name = data[1];
-        this.user.phone = data[0];
-        if(data) resolve(data);
+      this.fireDB.database.ref('users').child(this.emailshort).once("value",data =>{
+        this.user.name = data.val().username;
+        this.user.phone = data.val().phone;
+        if(data) resolve(this.user.name);
         else console.log(data);
-      })
+      });
     });
   }
 
