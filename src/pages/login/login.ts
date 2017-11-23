@@ -51,6 +51,7 @@ export class LoginPage {
         this.user = data;
         if(this.user.emailVerified){
           this.firePro.getUserProfile(this.user.email).then( user => {
+            console.log(user)
             this.firePro.resetTimeValidation().then( data =>{
               this.eventsPro.publish('user:login',this.user.uid, user,"url imagen");
               this.navCtrl.setRoot(NearEventsPage);
@@ -72,9 +73,15 @@ export class LoginPage {
   }
 
   login(){
+    this.countClock = true;
     this.configPro.presentLoading("Validando Credenciales");
-    if(this.configPro.validateInputsLogin(this.email, this.password)) this.authUser();
-    else this.configPro.dismissLoading();
+    if(this.configPro.validateInputsLogin(this.email, this.password)){
+      this.authUser();
+    } 
+    else{
+      this.configPro.dismissLoading();
+      this.countClock = false;
+    } 
   }
 
   authUser(){
@@ -83,12 +90,23 @@ export class LoginPage {
         console.log(data);
         this.user = data;
         this.firePro.resetTimeValidation().then( data =>{
-          this.eventsPro.publish('user:login',this.user.uid,this.user.email,"url imagen");
-          this.navCtrl.setRoot(NearEventsPage);
+          this.countClock = false;
+          this.firePro.getUserProfile(this.email + this.configPro.domain).then( (data:any) =>{
+            console.log(data);
+            if (data){
+              this.eventsPro.publish('user:login',this.user.uid,data,"url imagen");
+            }
+            else{
+              this.eventsPro.publish('user:login',this.user.uid,this.user.email,"url imagen");
+            }            
+            this.navCtrl.setRoot(NearEventsPage);
+          })
+          
         });
       }
     ).catch( error => {
       console.log(error);
+      this.countClock = false;
       if(error == "auth/too-many-requests"){
         this.firePro.setTimeValidation().then( data => {
           let t: any;

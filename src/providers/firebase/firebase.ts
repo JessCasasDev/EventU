@@ -466,7 +466,8 @@ export class FirebaseProvider {
 
   //Users
   addUser(fullname:string, phone:number, email:string){
-    let user = {"username": this.encrypt(fullname),"phone":this.encrypt(phone.toString())};
+    let user = {  "username": this.encrypt(fullname),
+                  "phone":this.encrypt(phone.toString())};
     return new Promise( (resolve, reject) => {
       this.fireDB.list('/users/').set(this.emailshort,user).then( data =>{
         console.log(data);
@@ -479,7 +480,7 @@ export class FirebaseProvider {
   }
 
   updateUser(user:any){
-    user = { "username":this.encrypt(user.name), "phone": this.encrypt(user.phone.toString())}
+    user = { "username":this.encrypt(user.username), "phone": this.encrypt(user.phone.toString())}
     this.configPro.presentLoading("Actualizando Datos...");
     return new Promise( (resolve, reject) => {
       this.fireDB.list('/users/').set(this.emailshort,user).then( data =>{
@@ -504,13 +505,13 @@ export class FirebaseProvider {
     this.cutEmail(email);
     return new Promise((resolve, reject) => {
       this.fireDB.database.ref('users').child(this.emailshort).once("value",data =>{
-        console.log(data.val())
         if(data.val() != null){
-          this.user.name = this.decrypt(data.val().username);
-          this.user.phone = this.decrypt(data.val().phone);
+          let name = data.val().username;
+          this.user.name = this.decrypt(name);
+          console.log(this.user.name,"username", data.val().username)
+          this.user.phone = Number.parseInt(this.decrypt(data.val().phone));
           resolve(this.user.name);
         } else {
-          console.log(this.user.email);
           resolve(this.user.email);
         }
       });
