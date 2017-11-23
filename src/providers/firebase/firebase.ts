@@ -5,6 +5,7 @@ import { AngularFireDatabase  } from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { ConfigProvider } from '../config/config'
 import { Storage } from '@ionic/storage';
+import CryptoJS from 'crypto-js';
 
 @Injectable()
 export class FirebaseProvider {
@@ -14,6 +15,10 @@ export class FirebaseProvider {
   inscribed_events = [];
   assisted_events = [];
   profile: any;
+
+  aes = CryptoJS.AES;
+  key = "secret key";
+
 
   constructor(public http: Http, public fireDB: AngularFireDatabase,
               public fireAuth: AngularFireAuth, public configPro: ConfigProvider,
@@ -211,21 +216,27 @@ export class FirebaseProvider {
   getEventsById() {
     return new Promise((resolve,reject) =>{
       let events = [];
-      var ref = this.fireDB.database.ref('events').orderByChild("user");
-      ref.equalTo(this.user.uid).once("value", data => {
+      var ref = this.fireDB.database.ref('events');
+      console.log(ref.orderByValue());
+      ref.orderByValue().once("value", data => {
         data.forEach( a => {
-          let event = a.val();
-          event.id = a.key;
-          events.push(event);
+          let user = this.decrypt(a.val().user);
+          if( user === this.user.uid) {
+            let event = a.val();
+            event.id = a.key;
+            events.push(event);
+          }
           return false;
-        });
-      }).then( data => resolve(events))
-    })
+        })
+      }).then( data => resolve(events));
 
+    });
   }
  
   addEvent(event) {
-    event.user = this.user.uid;
+    console.log(this.user.uid);
+    event.user = this.encrypt(this.user.uid);
+    console.log(event.user);
     return new Promise( (resolve, reject) => {
       this.fireDB.list('/events/').push(event).then(
         (data) => {
@@ -455,7 +466,7 @@ export class FirebaseProvider {
 
   //Users
   addUser(fullname:string, phone:number, email:string){
-    let user = {"username":fullname,"phone":phone};
+    let user = {"username": this.encrypt(fullname),"phone":this.encrypt(phone.toString())};
     return new Promise( (resolve, reject) => {
       this.fireDB.list('/users/').set(this.emailshort,user).then( data =>{
         console.log(data);
@@ -468,6 +479,7 @@ export class FirebaseProvider {
   }
 
   updateUser(user:any){
+    user = { "username":this.encrypt(user.name), "phone": this.encrypt(user.phone.toString())}
     this.configPro.presentLoading("Actualizando Datos...");
     return new Promise( (resolve, reject) => {
       this.fireDB.list('/users/').set(this.emailshort,user).then( data =>{
@@ -494,8 +506,8 @@ export class FirebaseProvider {
       this.fireDB.database.ref('users').child(this.emailshort).once("value",data =>{
         console.log(data.val())
         if(data.val() != null){
-          this.user.name = data.val().username;
-          this.user.phone = data.val().phone;
+          this.user.name = this.decrypt(data.val().username);
+          this.user.phone = this.decrypt(data.val().phone);
           resolve(this.user.name);
         } else {
           console.log(this.user.email);
@@ -511,6 +523,14 @@ export class FirebaseProvider {
 
   cutEmail(email: string){
     this.emailshort = email.split("@")[0];
+  }
+
+  encrypt( data : string ){
+    return this.aes.encrypt(data, this.key).toString();
+  }
+
+  decrypt( data : string){
+    return this.aes.decrypt( data, this.key).toString(CryptoJS.enc.Utf8);
   }
 
 }
