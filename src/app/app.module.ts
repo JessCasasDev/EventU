@@ -2,6 +2,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { IonicStorageModule } from '@ionic/storage';
+import { Geolocation } from '@ionic-native/geolocation';
+import { LocationAccuracy } from '@ionic-native/location-accuracy';
+
 import { MyApp } from './app.component';
 
 import { AssistedEventsPage } from '../pages/assisted-events/assisted-events';
@@ -82,7 +85,8 @@ const firebaseConfig = {
     GeolocationProvider,
     FirebaseProvider,
     ConfigProvider,
-  
+    Geolocation, 
+    LocationAccuracy,
   ]
 })
 export class AppModule {}

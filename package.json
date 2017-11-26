@@ -21,12 +21,17 @@
         "@angular/platform-browser": "4.1.3",
         "@angular/platform-browser-dynamic": "4.1.3",
         "@ionic-native/core": "3.12.1",
+        "@ionic-native/geolocation": "^4.4.2",
+        "@ionic-native/location-accuracy": "^4.4.2",
         "@ionic-native/splash-screen": "3.12.1",
         "@ionic-native/status-bar": "3.12.1",
         "@ionic/storage": "2.0.1",
         "angularfire2": "^5.0.0-rc.2",
         "cordova-android": "^6.2.3",
+        "cordova-plugin-compat": "^1.0.0",
         "cordova-plugin-device": "^1.1.4",
+        "cordova-plugin-geolocation": "^2.4.3",
+        "cordova-plugin-request-location-accuracy": "^2.2.2",
         "cordova-plugin-splashscreen": "^4.0.3",
         "cordova-plugin-statusbar": "^2.2.2",
         "cordova-plugin-whitelist": "^1.3.1",
@@ -60,7 +65,10 @@
             "cordova-plugin-statusbar": {},
             "cordova-plugin-whitelist": {},
             "ionic-plugin-keyboard": {},
-            "cordova-sqlite-storage": {}
+            "cordova-plugin-geolocation": {
+                "GEOLOCATION_USAGE_DESCRIPTION": "App needs to know your localization"
+            },
+            "cordova-plugin-request-location-accuracy": {}
         },
         "platforms": [
             "android"
