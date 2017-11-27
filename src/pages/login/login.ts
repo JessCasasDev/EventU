@@ -22,7 +22,13 @@ export class LoginPage {
   constructor(public navCtrl: NavController, public navParams: NavParams,
               public eventsPro: Events, public firePro: FirebaseProvider,
               public configPro: ConfigProvider, public alertCtrl: AlertController) {
+
     this.initialize();
+    let splash_image = document.getElementById("custom-overlay");
+    setTimeout(() => {
+      splash_image.style.display = "none";
+      //this.nav.setRoot(LoginPage);
+    },10000);
     //this.firePro.setTimeValidation();
     //this.firePro.resetTimeValidation();
   }
