@@ -76,6 +76,12 @@
 #mapDetail {
   height: 20em;
 }
+.center_map {
+	position: absolute;
+  bottom: 5px;
+	left: 5px;
+	z-index: 999999;
+}
 
 // Datepicker
 ionic2-datepicker {

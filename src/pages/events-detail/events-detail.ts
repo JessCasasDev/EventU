@@ -60,5 +60,13 @@ export class EventsDetailPage {
       }).catch(err => console.log(err));
   }
 
+  goToExternalMap(){
+      //just work on Android
+    let label = encodeURI('Eventu');
+    window.open('geo:0,0?q=' + 
+    this.event.coordinates.lat + "," + 
+    this.event.coordinates.lng + '(' + label + ')', '_system');
+  }
+
 
 }

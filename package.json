@@ -68,7 +68,8 @@
             "cordova-plugin-geolocation": {
                 "GEOLOCATION_USAGE_DESCRIPTION": "App needs to know your localization"
             },
-            "cordova-plugin-request-location-accuracy": {}
+            "cordova-plugin-request-location-accuracy": {},
+            "cordova-sqlite-storage": {}
         },
         "platforms": [
             "android"

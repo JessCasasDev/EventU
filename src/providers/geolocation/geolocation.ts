@@ -1,27 +1,25 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
 import { Geolocation } from '@ionic-native/geolocation';
-import { LocationAccuracy } from '@ionic-native/location-accuracy';
 import { Platform, AlertController } from 'ionic-angular';
+import { LocationAccuracy } from '@ionic-native/location-accuracy';
+
 import 'rxjs/add/operator/map';
 
 @Injectable()
 export class GeolocationProvider {
+
   public lat: number;
   public lng: number;
   gps_tries = 1;
   user_position = null;
   timeout = 10000;
-  
-  constructor(public http: Http, private geolocation : Geolocation,  
-    public locationAccuracy : LocationAccuracy,  private platform : Platform, 
-    public alertCtrl : AlertController) {
 
-    console.log('Hello GeolocationProvider Provider');
-    this.lat = 4.6381938; //Position Example 
-    this.lng = -74.0862351; //University's Geoposition
-  
+  constructor(private geolocation : Geolocation, private platform : Platform, 
+    public locationAccuracy : LocationAccuracy, public alertCtrl : AlertController) {
+      this.lat = 4.635464;
+      this.lng = -74.0839049;
   }
+
 
   getPosition(timeout): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -39,8 +37,8 @@ export class GeolocationProvider {
         }, (err) => {
           if (this.platform.is('mobileweb') || !this.platform.is('android') && !this.platform.is('ios')) {
             console.log("is not movil");
-            this.lat = 4.6713254;
-            this.lng = -74.05937569999999;
+            this.lat = 4.635464;
+            this.lng = -74.0839049;
             let position = {
               lat: this.lat,
               lng: this.lng
@@ -94,5 +92,4 @@ export class GeolocationProvider {
       });
     });
   }
-
 }

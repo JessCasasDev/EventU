@@ -49,13 +49,16 @@ export class NearEventsPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public configPro: ConfigProvider,
               public geoLoc: GeolocationProvider, public firePro: FirebaseProvider) {
-      this.initialize();
+                this.lat = 4.635464;
+                this.lng = -74.0839049;
+                this.initialize();
+      
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad NearEventsPage');
-    this.getPosition();
     this.loadMap();
+    this.getPosition();    
     this.showEvents();
   }
     
@@ -398,7 +401,7 @@ export class NearEventsPage {
         }, err => {
           console.log("error in geolocalization", err);
           this.userPosition = null;
-          this.configPro.presentAlert("GPS Error", 'No se pudo obtener tu posición');
+          this.configPro.presentAlert('GPS Error', 'No se pudo obtener tu posición');
           this.geoLoc.checkIfGpsOn().then((result) => {
             if (result) {
               this.getPosition();
@@ -413,6 +416,7 @@ export class NearEventsPage {
       this.gps = true;
       this.userMarker();
     }
+
   }
 
   userMarker() {
@@ -425,5 +429,12 @@ export class NearEventsPage {
 
       L.marker([this.userPosition.lat, this.userPosition.lng]).addTo(this.mymap);
     }
+  }
+
+  centerMap(){
+    if(this.userPosition !== null)
+        this.mymap.setView([this.userPosition.lat, this.userPosition.lng], 16);
+    else
+        this.mymap.setView([this.lat, this.lng], 16);      
   }
 }
