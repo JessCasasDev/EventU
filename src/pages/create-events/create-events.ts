@@ -24,6 +24,7 @@ export class CreateEventsPage {
     begin_time: Date;
     end_time: Date;
     limit = 20;
+    timeLimit: Date;
     newEvent: {
         name: string, description: string, phone: number, date: string, begin_time: string,
         end_time: string, coordinates: { lat: number, lng: number },  type: any
@@ -62,6 +63,8 @@ localeString = {
     this.lat = this.geoLoc.lat;
     this.lng = this.geoLoc.lng;
     this.date = new Date();
+    this.timeLimit = new Date();
+    console.log(this.timeLimit.toLocaleTimeString());
     if(this.navParams.data.event != null){
         this.newEvent = this.navParams.data.event;
         this.updating = true;
@@ -82,12 +85,40 @@ localeString = {
   }
     
   showCalendar() {
+      this.datePicker.min = new Date();
       this.datePicker.open();
+  }
+
+  resetTimes(datepickerId){
+      console.log(datepickerId);
+      if(datepickerId == 0){
+          console.log(this.newEvent.begin_time);
+          console.log(this.newEvent.end_time)
+          if(this.newEvent.end_time != "" && this.newEvent.begin_time > this.newEvent.end_time){
+              this.newEvent.begin_time = this.timeLimit.toLocaleTimeString();
+              this.configPro.presentToast("El tiempo de inicio debe ser menor al tiempo final");
+              console.log("cambio");
+          }
+      } else {
+        if( this.newEvent.begin_time > this.newEvent.end_time){
+            this.newEvent.end_time = this.newEvent.begin_time;
+            this.configPro.presentToast("El tiempo de inicio debe ser menor al tiempo final");
+            console.log("cambio");
+        }
+      }
+
   }
 
   changeDate(event) {
       this.date = event;
-  }
+      if(this.date.toLocaleDateString() > new Date().toLocaleDateString()){
+          this.timeLimit = new Date(this.date);
+      } else {
+          this.timeLimit = new Date();
+          this.newEvent.begin_time = this.timeLimit.toLocaleTimeString();
+          this.resetTimes(1);
+      }
+    }
 
   createEvent(){
       if (this.validateFields()) {

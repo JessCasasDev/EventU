@@ -4,6 +4,8 @@ import 'rxjs/add/operator/map';
 import { AngularFireDatabase  } from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { ConfigProvider } from '../config/config'
+import { Storage } from '@ionic/storage';
+import CryptoJS from 'crypto-js';
 
 @Injectable()
 export class FirebaseProvider {
@@ -12,9 +14,15 @@ export class FirebaseProvider {
   emailshort: string;
   inscribed_events = [];
   assisted_events = [];
+  profile: any;
+
+  aes = CryptoJS.AES;
+  key = "secret key";
+
 
   constructor(public http: Http, public fireDB: AngularFireDatabase,
-              public fireAuth: AngularFireAuth, public configPro: ConfigProvider) {
+              public fireAuth: AngularFireAuth, public configPro: ConfigProvider,
+              private storagePro: Storage) {
     console.log('Hello FirebaseProvider Provider');
   }
 
@@ -34,8 +42,10 @@ export class FirebaseProvider {
   }
 
   //Authentication
+
   login(email, password){
     return new Promise((resolve,reject) => {
+      
       this.fireAuth.auth.signInWithEmailAndPassword(email,password).then(
         (data) => {
           this.user = data;
@@ -45,14 +55,17 @@ export class FirebaseProvider {
           }
           else this.configPro.presentToast("Debes Validar tu correo primero");
         }
-    ).catch((error) => {
-      console.log(error);
-      if(error.code == "auth/network-request-failed"){
-        this.configPro.presentToast("Verifica tu conexión a internet");
-      }
-      else this.configPro.presentToast("Correo y/o contraseña incorrectos");
-      reject(error);
-      });
+      ).catch((error) => {
+        if(error.code == "auth/network-request-failed"){
+          this.configPro.presentToast("Verifica tu conexión a internet");
+        } else if( error.code == "auth/too-many-requests" ){
+          this.configPro.presentToast("Demasiados errores de contraseña");
+          reject("auth/too-many-requests");
+        }
+        else this.configPro.presentToast("Correo y/o contraseña incorrectos");
+        reject(error);
+        });
+        
     });
   }
 
@@ -78,7 +91,8 @@ export class FirebaseProvider {
   logout(){
     return new Promise((resolve,reject) => {
       this.fireAuth.auth.signOut().then( data => {
-        this.configPro.dismissLoading()
+
+        this.configPro.dismissLoading();
         resolve(data)
       })
       .catch( error => {
@@ -100,6 +114,77 @@ export class FirebaseProvider {
         }
       })
     })
+  }
+
+  getTimeValidation(){
+    return new Promise((resolve,reject) => {
+      this.storagePro.get("validationTime").then( data => {
+        resolve(data);          
+      })
+      .catch( error => {
+        console.log(error);
+        this.configPro.presentToast("No se puede acceder en este momento, Reintenta por favor");
+        reject(error);
+      })
+    });
+  }
+
+  getTimes(){
+    return new Promise((resolve,reject) => {
+      this.storagePro.get("times").then( data => {
+        resolve(data);          
+      })
+      .catch( error => {
+        console.log(error);
+        this.configPro.presentToast("No se puede acceder en este momento, Reintenta por favor");
+        reject(error);
+      })
+    });
+  }
+
+  setTimeValidation(){
+    return new Promise((resolve,reject) => {
+      let time = new Date();
+      this.storagePro.set("validationTime", time).then( data => {
+        this.storagePro.get("times").then( times => {
+          if(times){
+            if(times >= 100){
+              this.storagePro.set("times", 100000).then( times => {
+                resolve({"time": time,"times": 100000});
+              });
+            } else{
+              this.storagePro.set("times", times*10).then( times => {
+                resolve({"time": time,"times":times*10});
+              });
+            }
+          } else {
+            this.storagePro.set("times", 1).then( times => {
+              resolve({"time": time,"times":1});
+            });
+          }
+        });
+      })
+      .catch( error => {
+        console.log(error);
+        this.configPro.presentToast("No se puede acceder en este momento, Reintenta por favor");
+        reject(error);
+      })
+    });
+  }
+
+  resetTimeValidation(){
+    return new Promise((resolve,reject) => {
+      let time = new Date();
+      this.storagePro.set("validationTime", null).then( data => {
+        console.log("limpiando")
+        this.storagePro.set("times", null).then( data => resolve());
+      })
+      .catch( error => {
+        console.log(error);
+        this.configPro.presentToast("No se puede acceder en este momento, Reintenta por favor");
+        reject(error);
+      })
+    });
   }
   
   //Events
@@ -131,21 +216,27 @@ export class FirebaseProvider {
   getEventsById() {
     return new Promise((resolve,reject) =>{
       let events = [];
-      var ref = this.fireDB.database.ref('events').orderByChild("user");
-      ref.equalTo(this.user.uid).once("value", data => {
+      var ref = this.fireDB.database.ref('events');
+      console.log(ref.orderByValue());
+      ref.orderByValue().once("value", data => {
         data.forEach( a => {
-          let event = a.val();
-          event.id = a.key;
-          events.push(event);
+          let user = this.decrypt(a.val().user);
+          if( user === this.user.uid) {
+            let event = a.val();
+            event.id = a.key;
+            events.push(event);
+          }
           return false;
-        });
-      }).then( data => resolve(events))
-    })
+        })
+      }).then( data => resolve(events));
 
+    });
   }
  
   addEvent(event) {
-    event.user = this.user.uid;
+    console.log(this.user.uid);
+    event.user = this.encrypt(this.user.uid);
+    console.log(event.user);
     return new Promise( (resolve, reject) => {
       this.fireDB.list('/events/').push(event).then(
         (data) => {
@@ -375,7 +466,8 @@ export class FirebaseProvider {
 
   //Users
   addUser(fullname:string, phone:number, email:string){
-    let user = {"username":fullname,"phone":phone};
+    let user = {  "username": this.encrypt(fullname),
+                  "phone":this.encrypt(phone.toString())};
     return new Promise( (resolve, reject) => {
       this.fireDB.list('/users/').set(this.emailshort,user).then( data =>{
         console.log(data);
@@ -388,6 +480,7 @@ export class FirebaseProvider {
   }
 
   updateUser(user:any){
+    user = { "username":this.encrypt(user.username), "phone": this.encrypt(user.phone.toString())}
     this.configPro.presentLoading("Actualizando Datos...");
     return new Promise( (resolve, reject) => {
       this.fireDB.list('/users/').set(this.emailshort,user).then( data =>{
@@ -411,12 +504,17 @@ export class FirebaseProvider {
   getUserProfile(email:string){
     this.cutEmail(email);
     return new Promise((resolve, reject) => {
-      this.fireDB.list('/users/'+this.emailshort).valueChanges().subscribe( data =>{
-        this.user.name = data[1];
-        this.user.phone = data[0];
-        if(data) resolve(data);
-        else console.log(data);
-      })
+      this.fireDB.database.ref('users').child(this.emailshort).once("value",data =>{
+        if(data.val() != null){
+          let name = data.val().username;
+          this.user.name = this.decrypt(name);
+          console.log(this.user.name,"username", data.val().username)
+          this.user.phone = Number.parseInt(this.decrypt(data.val().phone));
+          resolve(this.user.name);
+        } else {
+          resolve(this.user.email);
+        }
+      });
     });
   }
 
@@ -426,6 +524,14 @@ export class FirebaseProvider {
 
   cutEmail(email: string){
     this.emailshort = email.split("@")[0];
+  }
+
+  encrypt( data : string ){
+    return this.aes.encrypt(data, this.key).toString();
+  }
+
+  decrypt( data : string){
+    return this.aes.decrypt( data, this.key).toString(CryptoJS.enc.Utf8);
   }
 
 }

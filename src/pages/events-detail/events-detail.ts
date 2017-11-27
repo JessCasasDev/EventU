@@ -18,6 +18,8 @@ export class EventsDetailPage {
   constructor(public navCtrl: NavController, public navParams: NavParams, public configPro: ConfigProvider,
       public firePro: FirebaseProvider) {
     this.event = this.navParams.get('event');
+    let todayTime = new Date().toLocaleTimeString();
+  
     console.log(event);
     this.isAssisted();
   }
@@ -58,6 +60,14 @@ export class EventsDetailPage {
       this.firePro.isAssisted(this.event).then( (result : any) => {
           this.is_assisted = result;
       }).catch(err => console.log(err));
+  }
+
+  goToExternalMap(){
+      //just work on Android
+    let label = encodeURI('Eventu');
+    window.open('geo:0,0?q=' + 
+    this.event.coordinates.lat + "," + 
+    this.event.coordinates.lng + '(' + label + ')', '_system');
   }
 
 

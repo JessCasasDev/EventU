@@ -38,6 +38,9 @@ export class NearEventsPage {
   controlLayers: any;
   today: Date;
 
+  userPosition: any;
+  gps: boolean = false;
+
   localeString = {
       monday: true,
       weekdays: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
@@ -46,12 +49,16 @@ export class NearEventsPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public configPro: ConfigProvider,
               public geoLoc: GeolocationProvider, public firePro: FirebaseProvider) {
-      this.initialize();
+                this.lat = 4.635464;
+                this.lng = -74.0839049;
+                this.initialize();
+      
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad NearEventsPage');
     this.loadMap();
+    this.getPosition();    
     this.showEvents();
   }
     
@@ -352,7 +359,8 @@ export class NearEventsPage {
           this.getMyEvents()
       }).catch(err => {
           console.log(err)
-          this.configPro.presentToast("El evento " + this.events.filter(item => item.id === event)[0].name + " ya esta en tu lista");
+          this.configPro.presentToast("El evento " + 
+          this.events.filter(item => item.id === event)[0].name + " ya esta en tu lista");
       });
   }
 
@@ -376,4 +384,55 @@ export class NearEventsPage {
     } else return false;
   }
 
+
+  getPosition() {
+    this.userPosition = this.geoLoc.user_position;
+    if (this.userPosition === null) {
+      this.geoLoc.getPosition(this.geoLoc.timeout * this.geoLoc.gps_tries).
+        then(position => {
+          this.gps = true;
+          this.userPosition = {lat: position.lat, lng: position.lng};
+          if(this.mymap){
+            this.mymap.setView([this.lat, this.lng], 16);
+          }
+          this.userMarker();
+        }, err => {
+          console.log("error in geolocalization", err);
+          this.userPosition = null;
+          this.configPro.presentAlert('GPS Error', 'No se pudo obtener tu posición');
+          this.geoLoc.checkIfGpsOn().then((result) => {
+            if (result) {
+              this.getPosition();
+            }
+          }, err => {
+            this.gps = false;
+            this.configPro.presentToast("Permiso denegado");
+          });
+        });
+    }
+    else {
+      this.gps = true;
+      this.userMarker();
+    }
+
+  }
+
+  userMarker() {
+    if (this.userPosition.lat !== undefined) {
+      var myIcon = new L.DivIcon({
+        iconSize: new L.Point(50, 50),
+        className: 'display:none;',
+        html: '<div class="pin"><div class="white-point"></div></div>'
+      });
+
+      L.marker([this.userPosition.lat, this.userPosition.lng]).addTo(this.mymap);
+    }
+  }
+
+  centerMap(){
+    if(this.userPosition !== null)
+        this.mymap.setView([this.userPosition.lat, this.userPosition.lng], 16);
+    else
+        this.mymap.setView([this.lat, this.lng], 16);      
+  }
 }

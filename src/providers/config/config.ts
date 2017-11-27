@@ -114,9 +114,9 @@ export class ConfigProvider {
     this.loading.dismiss();
   }
 
-  presentAlert(message){
+  presentAlert(title, message){
     let alert = this.alertCtrl.create({
-      title: 'Hola',
+      title: title,
       subTitle: message,
       buttons: ['Ok']
     });
