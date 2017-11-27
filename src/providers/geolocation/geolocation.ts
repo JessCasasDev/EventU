@@ -26,11 +26,9 @@ export class GeolocationProvider {
       var options = { timeout: timeout, enableHighAccuracy: true }
       this.platform.ready().then(() => {
         this.geolocation.getCurrentPosition(options).then(data => {
-          this.lat = data.coords.latitude;
-          this.lng = data.coords.longitude;
           let position = {
-            lat: this.lat,
-            lng: this.lng
+            lat: data.coords.latitude,
+            lng: data.coords.longitude
           }
           this.user_position = position;
           resolve(position);

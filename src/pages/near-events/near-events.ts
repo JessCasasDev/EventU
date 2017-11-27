@@ -391,9 +391,7 @@ export class NearEventsPage {
       this.geoLoc.getPosition(this.geoLoc.timeout * this.geoLoc.gps_tries).
         then(position => {
           this.gps = true;
-          this.lat = position.lat;
-          this.lng = position.lng;
-          this.userPosition = {lat: this.lat,lng: this.lng};
+          this.userPosition = {lat: position.lat, lng: position.lng};
           if(this.mymap){
             this.mymap.setView([this.lat, this.lng], 16);
           }

@@ -18,6 +18,8 @@ export class EventsDetailPage {
   constructor(public navCtrl: NavController, public navParams: NavParams, public configPro: ConfigProvider,
       public firePro: FirebaseProvider) {
     this.event = this.navParams.get('event');
+    let todayTime = new Date().toLocaleTimeString();
+  
     console.log(event);
     this.isAssisted();
   }
