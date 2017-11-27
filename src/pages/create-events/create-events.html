@@ -43,13 +43,13 @@
       <ion-col col-6>
         <ion-item>
           <ion-label>Hora Inicio</ion-label>
-          <ion-datetime displayFormat="HH:mm" pickerFormat="HH:mm" [(ngModel)]="newEvent.begin_time"></ion-datetime>
+          <ion-datetime displayFormat="HH:mm" min="{{this.timeLimit.toTimeString().split(' ')[0]}}" pickerFormat="HH:mm" [(ngModel)]="newEvent.begin_time" (ionChange)="resetTimes(0)"></ion-datetime>
         </ion-item>
       </ion-col>
       <ion-col col-6>
-        <ion-item>
+        <ion-item *ngIf="newEvent.begin_time != ''">
           <ion-label>Hora Fin</ion-label>
-          <ion-datetime displayFormat="HH:mm" pickerFormat="HH:mm" [(ngModel)]="newEvent.end_time"></ion-datetime>
+          <ion-datetime displayFormat="HH:mm" min="{{newEvent.begin_time}}" pickerFormat="HH:mm" [(ngModel)]="newEvent.end_time" (ionChange)="resetTimes(1)"></ion-datetime>
         </ion-item>
       </ion-col>
     </ion-row>
